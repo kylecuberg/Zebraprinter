@@ -49,13 +49,6 @@ changelog = 'https://github.com/kylekap/zebraPrinter/tree/main/Docs/Changelog.md
 line-length = 120
 target_version = ['py310']
 
-[tool.coverage.paths]
-source = ['src']
-tests = ['tests']
-
-[tool.coverage.run]
-source = ['src']
-
 [tool.coverage.report]
 show_missing = true
 exclude_lines = ["if __name__ == .__main__.:"]
