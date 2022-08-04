@@ -7,8 +7,8 @@
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 [![Windows](https://svgshare.com/i/ZhY.svg)](https://svgshare.com/i/ZhY.svg)
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
-[![GitHub Issues](https://img.shields.io/github/issues/kylekap/zebraPrinter.svg)](https://github.com/kylekap/zebraPrinter/issues)
-[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/kylekap/zebraPrinter.svg)](https://github.com/kylekap/zebraPrinter/pulls)
+[![GitHub Issues](https://img.shields.io/github/issues/kylecuberg/zebraPrinter.svg)](https://github.com/kylecuberg/zebraPrinter/issues)
+[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/kylecuberg/zebraPrinter.svg)](https://github.com/kylecuberg/zebraPrinter/pulls)
 [![Python](https://img.shields.io/pypi/pyversions/cookiecutter-hypermodern-python-instance)](https://www.python.org/downloads/release/python-3100/)
 
 ## About
