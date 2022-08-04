@@ -1,4 +1,4 @@
-# Python Template Project
+# Zebra Printing
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Flake8 Status](./reports/flake8/badge.svg)](./reports/flake8/index.html)
@@ -17,6 +17,6 @@ This project is to create a base template and include some common commands in th
 This project is intended to meet the requirements of PEP-518 and PEP-621, removing the setup.py file and having only minor use of setup.cfg (intended at this time only for flake8 support)
 
 ## Contents
-- [Python Template Project](#python-template-project)
+- [Zebra Printing](#zebra-printing)
   - [About](#about)
   - [Contents](#contents)
