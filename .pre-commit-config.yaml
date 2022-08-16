@@ -6,7 +6,6 @@ repos:
     - id: check-xml
     - id: check-json
     - id: check-added-large-files
-    - id: check-docstring-first
     - id: debug-statements
     - id: name-tests-test
   - repo: https://github.com/pycqa/isort
