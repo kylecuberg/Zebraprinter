@@ -1,41 +1,20 @@
-# Standard library
-import os
-import socket
-
-
-def zebraPrintSN(qr=""):
-    # Main function
-    try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-            sock.connect((os.getenv("ops_host"), int(os.getenv("ops_port"))))
-            txt = rf"""^XA
-            ^FO0,0,0
-            ^BQN,2,2,Q,7
-            ^FDQA, {qr} ^FS
-            ^CF0,15,15
-            ^FO55,20^FD{qr}^FS
-            ^XZ"""
-            sock.send(bytes(txt, "utf-8"))  # using bytes
-    except Exception as E:
-        print(type(E).__name__, __file__, E.__traceback__.tb_lineno, "\n", E)
-
-
-def get_input():
-    a = input("Please enter PN: ")
-    if a.startswith("P"):
-        a = a[1:]
-
-    while True:
-        b = input("Please enter Serial Number:")
-        if b.startswith("SLV"):
-            b = b
-            break
-    # P700009:SLV1100509
-    c = f"P{a}:{b}"
-    print(c)
-    return c
-
+# First-party/Local
+import util
 
 if __name__ == "__main__":
     """[summary]"""
-    zebraPrintSN(sn=get_input())
+
+    cell_list = util.loop_xlsb_file(
+        r"""C:\Users\KylePatterson\Documents\CubergGithub\zebraPrinter\input\Print_File.xlsb"""
+    )
+
+    for cell in cell_list:
+        qr = f"""^XA
+        ^FO150,10,2
+        ^BQN,2,5,Q,7
+        ^FDQA, {cell} ^FS
+        ^CF0,30,30
+        ^FO165,160,2^FD{cell}^FS
+        ^XZ"""
+        z = util.zebra(qr=qr)
+        z.send()
