@@ -12,7 +12,7 @@ keywords = ['Python']
 authors = [{email = 'kylekaptbone@yahoo.com'},{name = 'Kyle Patterson'}]
 classifiers = ['Programming Language :: Python']
 dynamic = ['readme']
-# dependencies = ['pyxlsb > 1.0.9']
+dependencies = ['pyxlsb', 'pandas', 'sqlalchemy','pymysql']
 
 [tool.setuptools.dynamic]
 readme = {file = ['README.md']}

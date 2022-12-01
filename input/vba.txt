@@ -1,0 +1,24 @@
+Sub link_python_excel()
+    ' link_python_excel Macro
+    ' Declare all variables
+    Dim objShell As Object
+    Dim PythonExe, PythonScript As String
+    Dim r As Range, cell As Range
+    
+    'Create a new Shell Object
+    Set objShell = VBA.CreateObject("Wscript.shell")
+
+    'Provide the file path to the Python Exe
+    PythonExe = r"C:\Users\KylePatterson\AppData\Local\Programs\Python\Python310\python.exe"
+    'Provide the file path to the Python script
+    PythonScript = "C:\Users\KylePatterson\Documents\CubergGithub\zebraPrinter\src\core.py"
+    'Run the Python script
+
+    Set r = Range(Range("A2"), Range("A2").End(xlDown))
+    
+    For Each cell In r
+        objShell.Run PythonExe & PythonScript & "^XA^FO150,10,2^BQN,2,5,Q,7^FDQA" & cell.Value & "^FS^CF0,30,30^FO165,160,2^FD" & cell.Value & "^FS^XZ"
+        'Application.Goto Reference:="link_python_excel"
+    Next
+
+End Sub

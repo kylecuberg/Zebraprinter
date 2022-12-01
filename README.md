@@ -12,11 +12,30 @@
 [![Python](https://img.shields.io/pypi/pyversions/cookiecutter-hypermodern-python-instance)](https://www.python.org/downloads/release/python-3100/)
 
 ## About
-This project is to create a base template and include some common commands in the docs/Resources.md to allow utilization of this project as a baseline for future projects.
 
 This project is intended to meet the requirements of PEP-518 and PEP-621, removing the setup.py file and having only minor use of setup.cfg (intended at this time only for flake8 support)
 
 ## Contents
+
 - [Zebra Printing](#zebra-printing)
   - [About](#about)
   - [Contents](#contents)
+  - [Installation](#installation)
+
+## Installation
+
+1. Download & extract from Github
+2. In core.py  set the cell_list value to the file location of the xlsb file (where this setup is installed)
+   1. "C:\Users\KylePatterson\Documents\CubergGithub\zebraPrinter\input\Print_File.xlsb" is current, only the "*\input\Print_file.xlsb" will be the same for yours
+3. In the excel file, right click the button.
+4. Click "assign macro", then "edit"
+5. in the macro, set the PythonExe to your computers file location of python.exe
+   - For easiest scenario, install python for all users, and find that location
+6. In the macro, set the PythonScriptExe to the location of the "*\src\core.py" file (beginning part should match the * from like 2.1 above)
+
+Each time the excel macro gets run, the file will need to be saved before the script executes.
+
+For workorders, use the input bat file. It will prompt for work order & run. 
+
+Must run this line from command line for new users:
+   py -m pip install C:\Users\KylePatterson\Documents\CubergGithub\zebraPrinter
