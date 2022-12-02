@@ -27,14 +27,14 @@ if __name__ == "__main__":
                 rf"""SELECT t.thingname, g.thingname FROM thing t
                          inner join genealogy g on t.thingname = g.parentthingname
                          inner join incomingcell i on i.barcode = g.thingname
-                         where t.thingname like {cell} order by t.thingname desc"""
+                         where t.thingname like '{cell}' order by t.thingname desc"""
             ).values.tolist()
 
             for row in cell_list:
                 cell = row[0]
                 barcode = row[1]
 
-                qr = f"""^XA^FO20,40,0^BQN,2,5,Q,7^FD{cell}^FS
+                qr = f"""^XA^FO20,40,0^BQN,2,5,Q,7^FDQA,{cell}^FS
                 ^CF0,40,32^FO160,90,0^FD{cell}^FS
                 ^CF0,20,20^FO160,170,0^FDRaw-{barcode}^FS
                 ^XZ"""

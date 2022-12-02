@@ -33,7 +33,7 @@ if __name__ == "__main__":
                 cell = row[0]
                 barcode = row[1]
 
-                qr = f"""^XA^FO20,40,0^BQN,2,5,Q,7^FD{cell}^FS
+                qr = f"""^XA^FO20,40,0^BQN,2,5,Q,7^FDQA,{cell}^FS
                 ^CF0,40,32^FO160,90,0^FD{cell}^FS
                 ^CF0,20,20^FO160,170,0^FDRaw-{barcode}^FS
                 ^XZ"""
