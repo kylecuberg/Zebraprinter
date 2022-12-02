@@ -32,8 +32,9 @@ This project is intended to meet the requirements of PEP-518 and PEP-621, removi
 5. in the macro, set the PythonExe to your computers file location of python.exe
    - For easiest scenario, install python for all users, and find that location
 6. In the macro, set the PythonScriptExe to the location of the "{}\src\core.py" file (beginning part should match the {}from like 2.1 above)
+7. For the WO printing, right click the .bat file and set the two strings to the correct locations
 
-Each time the excel macro gets run, the file will need to be saved before the script executes.
+NOTE: Each time the excel macro gets run, the file will need to be saved before the script executes.
 
 For workorders, use the input bat file. It will prompt for work order & run.
 
