@@ -17,15 +17,27 @@ class zebra:
         self.qr = qr
         self.conn_type = conn_type
 
-    def create_ip_conn(self):
+    def check_host_port(host, port):
+
+        return host, port
+
+    def create_ip_conn(self, **kwargs):
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect((os.getenv("ops_host", private.ops_host), int(os.getenv("ops_port", private.ops_port))))
+            if kwargs.get("host", "") == "":
+                host = os.getenv("ops_host", private.ops_host)
+            else:
+                host = kwargs.get("host")
+            if kwargs.get("port", "") == "":
+                port = os.getenv("ops_port", private.ops_port)
+            else:
+                port = kwargs.get("port")
+            sock.connect(host, int(port))
         except Exception as E:
             print(type(E).__name__, __file__, E.__traceback__.tb_lineno, "\n", E)
         return sock
 
-    def create_blue_conn(self):
+    def create_blue_conn(self, **kwargs):
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.connect((os.getenv("ops_host"), int(os.getenv("ops_port"))))
@@ -33,11 +45,11 @@ class zebra:
             print(type(E).__name__, __file__, E.__traceback__.tb_lineno, "\n", E)
         return sock
 
-    def send(self):
+    def send(self, **kwargs):
         if self.conn_type == "ip":
-            self.sock = self.create_ip_conn()
+            self.sock = self.create_ip_conn(host=kwargs.get("host", ""), port=kwargs.get("port", ""))
         elif self.conn_type == "bluetooth":
-            self.sock = self.create_blue_conn()
+            self.sock = self.create_blue_conn(host=kwargs.get("host", ""), port=kwargs.get("port", ""))
         self.sock.send(bytes(self.qr, "utf-8"))  # using bytes
         self.sock.close()
 
