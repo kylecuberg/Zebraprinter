@@ -2,34 +2,39 @@
 import util
 
 
-def get_input_dict():
-    label_dict = {
-        "Address1": "",
-        "Address2": "",
-        "Address3": "",
-        "PO": "",
-        "Net": "0",
-        "Gross": "0",
-        "Boxes": "0",
-        "PN": "",
-        "Quantity": "0",
-        "Supplier_PN": "",
-        "SupplierNumber": "0",
-        "Revision": "",
-        "Serial": "",
-        "Batch": "",
-    }
+class shipping_label:
+    def __init__(
+        self,
+        **kwargs,
+    ):
+        return None
 
-    return label_dict
+    def _get_input(self, label_dict):
+        for key in label_dict:
+            label_dict[key] = str(input(f"Please enter the value for: {key}"))
+        return label_dict
 
+    def VDA4902(self):
+        label_dict = {
+            "Address1": "",
+            "Address2": "",
+            "Address3": "",
+            "PO": "",
+            "Net": "0",
+            "Gross": "0",
+            "Boxes": "0",
+            "PN": "",
+            "Quantity": "0",
+            "Supplier_PN": "",
+            "SupplierNumber": "0",
+            "Revision": "",
+            "Serial": "",
+            "Batch": "",
+        }
 
-if __name__ == "__main__":
-    """[summary]"""
+        label = self._get_input(label_dict)
 
-    label = get_input_dict()
-
-    try:
-        qr = f"""^XA
+        zpl = f"""^XA
         ^FX Outline box
         ^FO0,0^GB1680,1180,2^FS
         ^FX individual boxes
@@ -90,9 +95,39 @@ if __name__ == "__main__":
         ^FO1280,940^FD{label.get("Revision")}^FS
         ^FO30,1050 ^A00,30,30 ^BCN,70,Y,Y ^FD{label.get("Serial")}^FS
         ^FO860,1050 ^A00,30,30 ^BCN,70,Y,Y ^FD{label.get("Batch")}^FS
-        ^XZ
-        """
+        ^XZ"""
+        return zpl
 
+    def UPS_Shipping(self):
+        label_dict = {
+            "Address1": "",
+            "Address2": "",
+            "Address3": "",
+            "PO": "",
+            "Net": "0",
+            "Gross": "0",
+            "Boxes": "0",
+            "PN": "",
+            "Quantity": "0",
+            "Supplier_PN": "",
+            "SupplierNumber": "0",
+            "Revision": "",
+            "Serial": "",
+            "Batch": "",
+        }
+
+        label = self._get_input(label_dict)
+        zpl = f"{label}"
+
+        return zpl
+
+
+if __name__ == "__main__":
+    """[summary]"""
+
+    qr = shipping_label.VDA4902()
+
+    try:
         z = util.zebra(qr=qr)
         # z.send()
 

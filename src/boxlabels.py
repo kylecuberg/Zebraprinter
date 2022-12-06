@@ -19,10 +19,10 @@ if __name__ == "__main__":
             database=os.getenv("mysql_database", "sparc"),
         )
         cell_list = sparc.select(
-            rf"""select i.lot, r.batch, i.cellformat, i.location
+            rf"""select i.lot, coalesce(r.batch,'N/A'), i.cellformat, i.location
                                  from sparc.incomingcell i
-                                 inner join sparc.receiving r on r.po = i.po and r.lp = i.lp
-                                 where i.barcode = '{cell}'
+                                 left join sparc.receiving r on r.po = i.po and r.lp = i.lp
+                                 where i.barcode like '{cell}'
                                  group by i.lot, i.cellformat, i.location, r.batch"""
         ).values.tolist()
 

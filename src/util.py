@@ -17,30 +17,31 @@ class zebra:
         self.qr = qr
         self.conn_type = conn_type
 
-    def check_host_port(host, port):
-
+    def _check_host_port(self, host, port):
+        if host == "":
+            host = os.getenv("ops_host", private.ops_host)
+        if port == "":
+            port = int(os.getenv("ops_port", private.ops_port))
         return host, port
 
     def create_ip_conn(self, **kwargs):
+        host = kwargs.get("host", "")
+        port = kwargs.get("port", "")
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            if kwargs.get("host", "") == "":
-                host = os.getenv("ops_host", private.ops_host)
-            else:
-                host = kwargs.get("host")
-            if kwargs.get("port", "") == "":
-                port = os.getenv("ops_port", private.ops_port)
-            else:
-                port = kwargs.get("port")
-            sock.connect(host, int(port))
+            host, port = self._check_host_port(host, port)
+            sock.connect((host, int(port)))
         except Exception as E:
             print(type(E).__name__, __file__, E.__traceback__.tb_lineno, "\n", E)
         return sock
 
     def create_blue_conn(self, **kwargs):
+        host = kwargs.get("host", "")
+        port = kwargs.get("port", "")
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect((os.getenv("ops_host"), int(os.getenv("ops_port"))))
+            host, port = self._check_host_port(host, port)
+            sock.connect((host, int(port)))
         except Exception as E:
             print(type(E).__name__, __file__, E.__traceback__.tb_lineno, "\n", E)
         return sock
