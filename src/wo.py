@@ -8,9 +8,6 @@ import util
 if __name__ == "__main__":
     """[summary]"""
 
-    # wo_list = util.loop_xlsb_file(r"""C:\Users\KylePatterson\Documents\CubergGithub\zebraPrinter\input\Print_File.xlsb""", sheetname="WO")
-    wo_list = [str(input("Please type in Work Order to print labels for: "))]
-
     try:
         # get from sql
         sparc = util.MySQL(
@@ -19,6 +16,8 @@ if __name__ == "__main__":
             os.getenv("mysql_host", private.mysql_host),
             database=os.getenv("mysql_database", "sparc"),
         )
+
+        wo_list = [str(input("Please type in Work Order to print labels for: "))]
 
         for wo in wo_list:
             wo = str(wo)
