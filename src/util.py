@@ -63,13 +63,17 @@ def loop_csv_file(filename):
     return lines
 
 
-def loop_xlsb_file(filename="input/Print_File.xlsb", sheetname="PRINT"):
+def loop_xlsb_file(filename="input/Print_File.xlsb", sheetname="PRINT", columns=1):
     li = []
     with open_workbook(filename) as wb:
         with wb.get_sheet(sheetname) as sheet:
-            for row in sheet.rows():
-                val = [r.v for r in row]
-                li.append(val[0])  # retrieving content
+            try:
+                for row in sheet.rows():
+                    val = [r.v for r in row]
+                    if val[0] is not None:
+                        li.append(val[0:columns])  # retrieving content
+            except Exception as E:
+                print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
     return li[1:]
 
 

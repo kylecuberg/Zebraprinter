@@ -5,7 +5,7 @@ if __name__ == "__main__":
     """[summary]"""
 
     cell_list = util.loop_xlsb_file(
-        r"""C:\Users\KylePatterson\Documents\CubergGithub\zebraPrinter\input\Print_File.xlsb"""
+        r"""C:\Users\KylePatterson\Documents\CubergGithub\zebraPrinter\input\Print_File.xlsb""", columns=2
     )
 
     try:

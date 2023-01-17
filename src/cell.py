@@ -22,11 +22,10 @@ if __name__ == "__main__":
         )
 
         for cell in cell_list:
-            cell = str(cell)
+            cell = str(cell[0])
             cell_list = sparc.select(
                 rf"""SELECT t.thingname, g.thingname FROM thing t
                          inner join genealogy g on t.thingname = g.parentthingname
-                         inner join incomingcell i on i.barcode = g.thingname
                          where t.thingname like '{cell}' order by t.thingname desc"""
             ).values.tolist()
 

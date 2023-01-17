@@ -24,7 +24,6 @@ if __name__ == "__main__":
             cell_list = sparc.select(
                 rf"""SELECT t.thingname, g.thingname FROM thing t
                          inner join genealogy g on t.thingname = g.parentthingname
-                         inner join incomingcell i on i.barcode = g.thingname
                          where workorder like {wo} order by t.thingname desc"""
             ).values.tolist()
 
