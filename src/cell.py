@@ -33,9 +33,9 @@ if __name__ == "__main__":
                 cell = row[0]
                 barcode = row[1]
 
-                qr = f"""^XA^FO20,40,0^BQN,2,5,Q,7^FDQA,{cell}^FS
-                ^CF0,40,32^FO140,90,0^FD{cell}^FS
-                ^CF0,20,20^FO140,170,0^FDRaw-{barcode}^FS
+                qr = f"""^XA^FO15,40,0^BQN,2,5,Q,7^FDQA,{cell}^FS
+                ^CF0,40,32^FO135,90,0^FD{cell}^FS
+                ^CF0,20,20^FO135,160,0^FDRaw-{barcode}^FS
                 ^XZ"""
                 z = util.zebra(qr=qr)
                 z.send(host=os.get_env("zt411_host", ""), port=os.get_env("zt411_port", ""))
