@@ -19,9 +19,9 @@ class zebra:
 
     def _check_host_port(self, host, port):
         if host == "":
-            host = os.getenv("ops_host", private.ops_host)
+            host = os.getenv("ops_host", private.zt411_host)
         if port == "":
-            port = int(os.getenv("ops_port", private.ops_port))
+            port = int(os.getenv("ops_port", private.zt411_port))
         return host, port
 
     def create_ip_conn(self, **kwargs):

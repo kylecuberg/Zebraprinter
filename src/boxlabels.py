@@ -48,7 +48,7 @@ if __name__ == "__main__":
                     ^CF0,60,52^FO550,320,1^FD{celllocation}^FS
                     ^XZ"""
                 z = util.zebra(qr=qr)
-                z.send()
+                z.send(host=os.get_env("zt421_host", ""), port=os.get_env("zt421_port", ""))
 
     except Exception as E:
         print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)

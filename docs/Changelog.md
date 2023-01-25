@@ -1,7 +1,11 @@
 # Changelog
 
+2023_01_25
+    Added second printer lookup for ZT421
+
 2022_10_10
     Added input check function
+
 
 ## For equipment labels
 
