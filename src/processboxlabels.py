@@ -35,9 +35,11 @@ if __name__ == "__main__":
                 cellformat = row[2]
                 celllocation = row[3]
 
-                label = util.qr_text(dpi=203)
+                label = util.qr_text(dpi=300)
                 z = util.zebra(qr=label.process_boxlabel(lot, batch, cellformat, celllocation, qty))
-                z.send(host=os.get_env("zt421_host", ""), port=os.get_env("zt421_port", ""))
+                z.send(
+                    host=os.get_env("zt421_host", private.zt421_host), port=os.get_env("zt421_port", private.zt421_port)
+                )
                 # qr =
                 f"""^XA
                     ^CF0,40,32^FO20,20,0^FDLot:^FS

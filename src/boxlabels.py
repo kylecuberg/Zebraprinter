@@ -34,21 +34,11 @@ if __name__ == "__main__":
                 cellformat = row[2]
                 celllocation = row[3]
 
-                qr = f"""^XA
-                    ^CF0,60,52^FO20,20,0^FDLot:^FS
-                    ^CF0,60,52^FO20,120,0^FDBatch:^FS
-                    ^CF0,60,52^FO20,220,0^FDFormat:^FS
-                    ^CF0,60,52^FO20,320,0^FDLocation:^FS
-                    ^GB700,0,1,B,1^FO0,100,0^FS
-                    ^GB700,0,1,B,1^FO0,200,0^FS
-                    ^GB700,0,1,B,1^FO0,300,0^FS
-                    ^CF0,60,52^FO550,20,1^FD{lot}^FS
-                    ^CF0,60,52^FO550,120,1^FD{batch}^FS
-                    ^CF0,60,52^FO550,220,1^FD{cellformat}^FS
-                    ^CF0,60,52^FO550,320,1^FD{celllocation}^FS
-                    ^XZ"""
-                z = util.zebra(qr=qr)
-                z.send(host=os.get_env("zt421_host", ""), port=os.get_env("zt421_port", ""))
+                label = util.qr_text(dpi=300)
+                z = util.zebra(qr=label.boxlabel(lot, batch, cellformat, celllocation))
+                z.send(
+                    host=os.get_env("zt421_host", private.zt421_host), port=os.get_env("zt421_port", private.zt421_port)
+                )
 
     except Exception as E:
         print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)

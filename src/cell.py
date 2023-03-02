@@ -35,7 +35,9 @@ if __name__ == "__main__":
 
                 label = util.qr_text(dpi=203)
                 z = util.zebra(qr=label.sn(cell=cell, barcode=barcode))
-                z.send(host=os.get_env("zt411_host", ""), port=os.get_env("zt411_port", ""))
+                z.send(
+                    host=os.get_env("zt411_host", private.zt411_host), port=os.get_env("zt411_port", private.zt411_port)
+                )
 
     except Exception as E:
         print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
