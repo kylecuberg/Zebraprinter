@@ -35,30 +35,12 @@ if __name__ == "__main__":
                 cellformat = row[2]
                 celllocation = row[3]
 
-                label = util.qr_text(dpi=300)
-                z = util.zebra(qr=label.process_boxlabel(lot, batch, cellformat, celllocation, qty))
+                label = util.qr_text(label_x=3, label_y=2, dpi=os.getenv("zt421_dpi", private.zt421_dpi))
+                qr = label.process_boxlabel(lot, batch, cellformat, celllocation, qty)
+                z = util.zebra(qr)
                 z.send(
-                    host=os.get_env("zt421_host", private.zt421_host), port=os.get_env("zt421_port", private.zt421_port)
+                    host=os.getenv("zt421_host", private.zt421_host), port=os.getenv("zt421_port", private.zt421_port)
                 )
-                # qr =
-                f"""^XA
-                    ^CF0,40,32^FO20,20,0^FDLot:^FS
-                    ^CF0,40,32^FO20,100,0^FDBatch:^FS
-                    ^CF0,40,32^FO20,180,0^FDFormat:^FS
-                    ^CF0,40,32^FO20,260,0^FDLocation:^FS
-                    ^CF0,40,32^FO20,340,0^FDQty:^FS
-                    ^GB700,0,1,B,1^FO0,80,0^FS
-                    ^GB700,0,1,B,1^FO0,160,0^FS
-                    ^GB700,0,1,B,1^FO0,240,0^FS
-                    ^GB700,0,1,B,1^FO0,320,0^FS
-                    ^CF0,40,32^FO550,20,1^FD{lot}^FS
-                    ^CF0,40,32^FO550,100,1^FD{batch}^FS
-                    ^CF0,40,32^FO550,180,1^FD{cellformat}^FS
-                    ^CF0,40,32^FO550,260,1^FD{celllocation}^FS
-                    ^CF0,40,32^FO550,340,1^FD{qty}^FS
-                    ^XZ"""
-                # z = util.zebra(qr=qr)
-                # z.send(host=os.get_env("zt421_host", ""), port=os.get_env("zt421_port", ""))
 
     except Exception as E:
         print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)

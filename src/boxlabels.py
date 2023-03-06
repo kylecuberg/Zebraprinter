@@ -34,10 +34,10 @@ if __name__ == "__main__":
                 cellformat = row[2]
                 celllocation = row[3]
 
-                label = util.qr_text(dpi=300)
+                label = util.qr_text(dpi=300, label_x=3, label_y=2)
                 z = util.zebra(qr=label.boxlabel(lot, batch, cellformat, celllocation))
                 z.send(
-                    host=os.get_env("zt421_host", private.zt421_host), port=os.get_env("zt421_port", private.zt421_port)
+                    host=os.getenv("zt421_host", private.zt421_host), port=os.getenv("zt421_port", private.zt421_port)
                 )
 
     except Exception as E:

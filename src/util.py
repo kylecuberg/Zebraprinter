@@ -110,11 +110,14 @@ class MySQL:
 
 
 class qr_text:
-    def __init__(self, **kwargs):
-        self.dpi = kwargs.get("dpi", 203)
-        self.label_x = kwargs.get("x", 2)
-        self.label_y = kwargs.get("y", 1)
-        self.qr = ""
+    def __init__(self, dpi=203, label_x=2, label_y=1, **kwargs):
+        try:
+            self.dpi = float(dpi)
+            self.label_x = float(label_x)
+            self.label_y = float(label_y)
+            self.qr = ""
+        except Exception as E:
+            print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
 
     def sn(self, cell, barcode):
         qr_loc = str(round(0.075 * self.dpi, 0)) + "," + str(round(0.2 * self.dpi, 0))
@@ -130,8 +133,9 @@ class qr_text:
         return self.qr
 
     def boxlabel(self, lot, batch, cellformat, celllocation):
-        text_size = str(round(self.dpi * 0.3), 0) + "," + str(round(self.dpi * 0.256, 0))
-        self.qr = f"""^XA
+        try:
+            text_size = str(round(self.dpi * 0.3), 0) + "," + str(round(self.dpi * 0.256, 0))
+            self.qr = f"""^XA
                     ^CF0,{text_size}^FO20,20,0^FDLot:^FS
                     ^CF0,{text_size}^FO20,120,0^FDBatch:^FS
                     ^CF0,{text_size}^FO20,220,0^FDFormat:^FS
@@ -144,24 +148,29 @@ class qr_text:
                     ^CF0,{text_size}^FO550,220,1^FD{cellformat}^FS
                     ^CF0,{text_size}^FO550,320,1^FD{celllocation}^FS
                     ^XZ"""
+        except Exception as E:
+            print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
         return self.qr
 
     def process_boxlabel(self, lot, batch, cellformat, celllocation, qty):
-        text_size = str(round(self.dpi * 0.3), 0) + "," + str(round(self.dpi * 0.256, 0))
-        self.qr = f"""^XA
-                    ^CF0,{text_size}^FO20,20,0^FDLot:^FS
-                    ^CF0,{text_size}^FO20,100,0^FDBatch:^FS
-                    ^CF0,{text_size}^FO20,180,0^FDFormat:^FS
-                    ^CF0,{text_size}^FO20,260,0^FDLocation:^FS
-                    ^CF0,{text_size}^FO20,340,0^FDQty:^FS
-                    ^GB{str(self.label_x * self.dpi)},0,1,B,1^FO0,{str(0.4 * self.dpi)},0^FS
-                    ^GB{str(self.label_x * self.dpi)},0,1,B,1^FO0,{str(0.8 * self.dpi)},0^FS
-                    ^GB{str(self.label_x * self.dpi)},0,1,B,1^FO0,{str(1.2 * self.dpi)},0^FS
-                    ^GB{str(self.label_x * self.dpi)},0,1,B,1^FO0,{str(1.6 * self.dpi)},0^FS
-                    ^CF0,{text_size}^FO550,20,1^FD{lot}^FS
-                    ^CF0,{text_size}^FO550,100,1^FD{batch}^FS
-                    ^CF0,{text_size}^FO550,180,1^FD{cellformat}^FS
-                    ^CF0,{text_size}^FO550,240,1^FD{celllocation}^FS
-                    ^CF0,{text_size}^FO550,340,1^FD{qty}^FS
+        try:
+            text_size = f"{str(round(self.dpi * 0.3, 0))},{str(round(self.dpi * 0.3, 0))}"
+            self.qr = f"""^XA
+                    ^CF0,{text_size}^FO20,{str(0.1 * self.dpi)},0^FDLot:^FS
+                    ^CF0,{text_size}^FO20,{str(0.5 * self.dpi)},0^FDBatch:^FS
+                    ^CF0,{text_size}^FO20,{str(0.9 * self.dpi)},0^FDFormat:^FS
+                    ^CF0,{text_size}^FO20,{str(1.3 * self.dpi)},0^FDLocation:^FS
+                    ^CF0,{text_size}^FO20,{str(1.7 * self.dpi)},0^FDQty:^FS
+                    ^GB{str(1.8 * self.label_x * self.dpi)},0,1,B,1^FO0,{str(0.4 * self.dpi)},0^FS
+                    ^GB{str(1.8 * self.label_x * self.dpi)},0,1,B,1^FO0,{str(0.8 * self.dpi)},0^FS
+                    ^GB{str(1.8 * self.label_x * self.dpi)},0,1,B,1^FO0,{str(1.2 * self.dpi)},0^FS
+                    ^GB{str(1.8 * self.label_x * self.dpi)},0,1,B,1^FO0,{str(1.6 * self.dpi)},0^FS
+                    ^CF0,{text_size}^FO{str(self.label_x * self.dpi)},{str(0.1 * self.dpi)},1^FD{str(lot)}^FS
+                    ^CF0,{text_size}^FO{str(self.label_x * self.dpi)},{str(0.5 * self.dpi)},1^FD{str(batch)}^FS
+                    ^CF0,{text_size}^FO{str(self.label_x * self.dpi)},{str(0.9 * self.dpi)},1^FD{str(cellformat)}^FS
+                    ^CF0,{text_size}^FO{str(self.label_x * self.dpi)},{str(1.3 * self.dpi)},1^FD{str(celllocation)}^FS
+                    ^CF0,{text_size}^FO{str(self.label_x * self.dpi)},{str(1.7 * self.dpi)},1^FD{qty}^FS
                     ^XZ"""
+        except Exception as E:
+            print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
         return self.qr
