@@ -18,8 +18,8 @@ if __name__ == "__main__":
         )
 
         while True:
-            cell = str(input("Please type in cell_id to print box label for: "))
-            qty = str(input("Please type in the QUANTITY of cells in the box:  "))
+            cell = str(input("Please type in cell_id to print box label for: ")).strip()
+            qty = str(input("Please type in the QUANTITY of cells in the box:  ")).strip()
 
             cell_list = sparc.select(
                 rf"""select i.lot, coalesce(r.batch,'N/A'), i.cellformat, i.location

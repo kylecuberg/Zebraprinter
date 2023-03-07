@@ -1,11 +1,16 @@
 # Changelog
 
+2023_03_07
+    Attempt to standardize installation procedures & use more dynamic referencing for additional computers
+
+2023_03_06
+    Added processboxlabel functions, improved util
+
 2023_01_25
     Added second printer lookup for ZT421
 
 2022_10_10
     Added input check function
-
 
 ## For equipment labels
 

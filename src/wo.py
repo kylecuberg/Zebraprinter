@@ -17,9 +17,9 @@ if __name__ == "__main__":
             database=os.getenv("mysql_database", "sparc"),
         )
 
-        wo_list = [str(input("Please type in Work Order to print labels for: "))]
+        wo_list = str(input("Please type in Work Order to print labels for: ")).strip()
 
-        for wo in wo_list:
+        for wo in [wo_list]:
             wo = str(wo)
             cell_list = sparc.select(
                 rf"""SELECT t.thingname, g.thingname FROM thing t
