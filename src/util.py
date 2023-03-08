@@ -112,7 +112,7 @@ class MySQL:
 class qr_text:
     def __init__(self, dpi=203, label_x=2, label_y=1, **kwargs):
         try:
-            self.dpi = float(dpi)
+            self.dpi = int(dpi)
             self.label_x = float(label_x)
             self.label_y = float(label_y)
             self.qr = ""
@@ -134,7 +134,7 @@ class qr_text:
 
     def boxlabel(self, lot, batch, cellformat, celllocation):
         try:
-            text_size = str(round(self.dpi * 0.3), 0) + "," + str(round(self.dpi * 0.256, 0))
+            text_size = f"{str(round(self.dpi * 0.3, 0))},{str(round(self.dpi * 0.256, 0))}"
             self.qr = f"""^XA
                     ^CF0,{text_size}^FO20,20,0^FDLot:^FS
                     ^CF0,{text_size}^FO20,120,0^FDBatch:^FS
