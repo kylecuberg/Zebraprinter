@@ -136,17 +136,17 @@ class qr_text:
         try:
             text_size = f"{str(round(self.dpi * 0.3, 0))},{str(round(self.dpi * 0.256, 0))}"
             self.qr = f"""^XA
-                    ^CF0,{text_size}^FO20,20,0^FDLot:^FS
-                    ^CF0,{text_size}^FO20,120,0^FDBatch:^FS
-                    ^CF0,{text_size}^FO20,220,0^FDFormat:^FS
-                    ^CF0,{text_size}^FO20,320,0^FDLocation:^FS
+                    ^CF0,{text_size}^FO20,{str(0.1 * self.dpi)},0^FDLot:^FS
+                    ^CF0,{text_size}^FO20,{str(0.6 * self.dpi)},0^FDBatch:^FS
+                    ^CF0,{text_size}^FO20,{str(1.1 * self.dpi)},0^FDFormat:^FS
+                    ^CF0,{text_size}^FO20,{str(1.6 * self.dpi)},0^FDLocation:^FS
                     ^GB{str(self.label_x * self.dpi)},0,1,B,1^FO0,{str(0.5 * self.dpi)},0^FS
                     ^GB{str(self.label_x * self.dpi)},0,1,B,1^FO0,{str(1 * self.dpi)},0^FS
                     ^GB{str(self.label_x * self.dpi)},0,1,B,1^FO0,{str(1.5 * self.dpi)},0^FS
-                    ^CF0,{text_size}^FO550,20,1^FD{lot}^FS
-                    ^CF0,{text_size}^FO550,120,1^FD{batch}^FS
-                    ^CF0,{text_size}^FO550,220,1^FD{cellformat}^FS
-                    ^CF0,{text_size}^FO550,320,1^FD{celllocation}^FS
+                    ^CF0,{text_size}^FO{str(0.9*self.label_x * self.dpi)},{str(0.1 * self.dpi)},1^FD{lot}^FS
+                    ^CF0,{text_size}^FO{str(0.9*self.label_x * self.dpi)},{str(0.6 * self.dpi)},1^FD{batch}^FS
+                    ^CF0,{text_size}^FO{str(0.9*self.label_x * self.dpi)},{str(1.1 * self.dpi)},1^FD{cellformat}^FS
+                    ^CF0,{text_size}^FO{str(0.9*self.label_x * self.dpi)},{str(1.6 * self.dpi)},1^FD{celllocation}^FS
                     ^XZ"""
         except Exception as E:
             print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
@@ -165,11 +165,11 @@ class qr_text:
                     ^GB{str(1.8 * self.label_x * self.dpi)},0,1,B,1^FO0,{str(0.8 * self.dpi)},0^FS
                     ^GB{str(1.8 * self.label_x * self.dpi)},0,1,B,1^FO0,{str(1.2 * self.dpi)},0^FS
                     ^GB{str(1.8 * self.label_x * self.dpi)},0,1,B,1^FO0,{str(1.6 * self.dpi)},0^FS
-                    ^CF0,{text_size}^FO{str(self.label_x * self.dpi)},{str(0.1 * self.dpi)},1^FD{str(lot)}^FS
-                    ^CF0,{text_size}^FO{str(self.label_x * self.dpi)},{str(0.5 * self.dpi)},1^FD{str(batch)}^FS
-                    ^CF0,{text_size}^FO{str(self.label_x * self.dpi)},{str(0.9 * self.dpi)},1^FD{str(cellformat)}^FS
-                    ^CF0,{text_size}^FO{str(self.label_x * self.dpi)},{str(1.3 * self.dpi)},1^FD{str(celllocation)}^FS
-                    ^CF0,{text_size}^FO{str(self.label_x * self.dpi)},{str(1.7 * self.dpi)},1^FD{qty}^FS
+                    ^CF0,{text_size}^FO{str(0.9*self.label_x * self.dpi)},{str(0.1 * self.dpi)},1^FD{str(lot)}^FS
+                    ^CF0,{text_size}^FO{str(0.9*self.label_x * self.dpi)},{str(0.5 * self.dpi)},1^FD{str(batch)}^FS
+                    ^CF0,{text_size}^FO{str(0.9*self.label_x * self.dpi)},{str(0.9 * self.dpi)},1^FD{str(cellformat)}^FS
+                    ^CF0,{text_size}^FO{str(0.9*self.label_x * self.dpi)},{str(1.3 * self.dpi)},1^FD{str(celllocation)}^FS
+                    ^CF0,{text_size}^FO{str(0.9*self.label_x * self.dpi)},{str(1.7 * self.dpi)},1^FD{qty}^FS
                     ^XZ"""
         except Exception as E:
             print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
