@@ -1,5 +1,11 @@
 # Changelog
 
+2023_03_17
+    Update to processboxlabel to account for different SPARC storage procedure
+
+2023_03_08
+    Update to util.qrtext.boxlabel to make dynamic sizing reference
+
 2023_03_07
     Attempt to standardize installation procedures & use more dynamic referencing for additional computers
 
