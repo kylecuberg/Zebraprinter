@@ -9,8 +9,7 @@ if __name__ == "__main__":
     """[summary]"""
 
     cell_list = util.loop_xlsb_file(
-        # r"""C:\Users\KylePatterson\Documents\CubergGithub\zebraPrinter\input\Print_File.xlsb""", columns=2
-        os.path.abspath(os.path.join(os.pardir(), r"\input\Print_File.xlsb")),
+        os.path.abspath(os.path.join(os.pardir(), "input", "Print_File.xlsb")),
         columns=2,
     )
 

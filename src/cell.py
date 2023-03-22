@@ -8,11 +8,7 @@ import util
 if __name__ == "__main__":
     """[summary]"""
 
-    cell_list = util.loop_xlsb_file(
-        os.path.abspath(os.path.join(os.pardir(), r"\input\Print_File.xlsb")),
-        columns=1
-        # r"""C:\Users\KylePatterson\Documents\CubergGithub\zebraPrinter\input\Print_File.xlsb"""
-    )
+    cell_list = util.loop_xlsb_file(os.path.abspath(os.path.join(os.pardir(), "input", "Print_File.xlsb")), columns=1)
 
     try:
         # get from sql
@@ -35,7 +31,7 @@ if __name__ == "__main__":
                 cell = row[0]
                 barcode = row[1]
 
-                label = util.qr_text(dpi=203)
+                label = util.qr_text(label_x=2, label_y=1, dpi=os.getenv("zt411_dpi", private.zt411_dpi))
                 z = util.zebra(qr=label.sn(cell=cell, barcode=barcode))
                 z.send(
                     host=os.get_env("zt411_host", private.zt411_host), port=os.get_env("zt411_port", private.zt411_port)

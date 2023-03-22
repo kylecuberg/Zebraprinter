@@ -1,5 +1,8 @@
 # Changelog
 
+2023_03_22
+    Update to os.path.join(), and standardize wo printing logic to match cell.py
+
 2023_03_17
     Update to processboxlabel to account for different SPARC storage procedure
 
