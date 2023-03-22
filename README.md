@@ -62,7 +62,7 @@ NOTE: Each time the excel macro gets run, the file will autosave before the scri
 - [] Dynamic referencing in xlsb macro to prevent needing to edit macro for each new user?
 - [] Update qrtext.sn to be mirror processboxlabel generalization
 - [X] Update qrtext.boxlabel to be mirror processboxlabel generalization
-- [] Update wo.py to use qrtext class
+- [x] Update wo.py to use qrtext class
 - [] Add pouch to qrtext class
 - [] Update pouch.py to use qrtext class
 - [X] V1/V2 cells stored differently, need alt query
