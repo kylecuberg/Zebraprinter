@@ -21,7 +21,8 @@ This project is intended to meet the requirements of PEP-518 and PEP-621, removi
   - [About](#about)
   - [Contents](#contents)
   - [Requirements](#requirements)
-  - [Installation](#installation)
+  - [Installation - Windows](#installation---windows)
+  - [Installation - Mac](#installation---mac)
   - [Use](#use)
   - [ToDo](#todo)
 
@@ -30,9 +31,9 @@ This project is intended to meet the requirements of PEP-518 and PEP-621, removi
 Python 3.10 is the currently supported version.
 If you wish to change this, you may use any version >3.7, but if you plan to edit, the version of python must be updated in the pyproject.toml in the "target_version" under tool.black
 
-## Installation
+## Installation - Windows
 
-1. Make sure computer has Python installed & you know the location of the python executable file.
+1. Make sure computer has Python installed (Version must be >= 3.7, 3.10 is preferred)& you know the location of the python executable file.
 2. Download & extract files from Github
 3. Move whole folder to desired location
 4. Must run this line from command line for new users:
@@ -45,6 +46,13 @@ If you wish to change this, you may use any version >3.7, but if you plan to edi
 9. For manual, follow 8 but set the PythonScriptExe to the location of the "{}\src\manual.py" file (beginning part should match the file location)
 10. You will need to get the private.py file from @kylecuberg to get the connection info!
 
+## Installation - Mac
+
+1. Make sure computer has Python installed (Version must be >= 3.7, 3.10 is preferred)& you know the location of the python executable file.
+2. Download & extract files from Github
+3. Move whole folder to desired location
+4. [TBD]
+
 ## Use
 
 Most scripts within this project will take an input, query against SPARC for the rest of the appropriate information (as well as verify the information provided was contained within SPARC), and send a string of characters to the appropriate printer for the label type/size associated.
@@ -52,17 +60,19 @@ Most scripts within this project will take an input, query against SPARC for the
 For most items, there will be an associated .bat file. This is a command line prompt that runs the python script for you.
 
 For the remaining items, there is an excel file. Enter the serials in the first column, and hit the macro button to print those serials.
-THe "manual" macro in the excel file is the only script that does not reference SPARC. Instead, it simply takes the given serials and barcodes & outputs the labels.
+The "manual" macro in the excel file is the only script that does not reference SPARC. Instead, it simply takes the given serials and barcodes & outputs the labels.
 
 NOTE: Each time the excel macro gets run, the file will autosave before the script executes.
 
+NOTE: These execution methods have only been validated on Windows.
+
 ## ToDo
 
-- [] Add "manual" macro to xlsb
-- [] Dynamic referencing in xlsb macro to prevent needing to edit macro for each new user?
-- [] Update qrtext.sn to be mirror processboxlabel generalization
-- [X] Update qrtext.boxlabel to be mirror processboxlabel generalization
+- [ ] Add "manual" macro to xlsb
+- [ ] Dynamic referencing in xlsb macro to prevent needing to edit macro for each new user?
+- [x] Update qrtext.sn to be mirror processboxlabel generalization
+- [x] Update qrtext.boxlabel to be mirror processboxlabel generalization
 - [x] Update wo.py to use qrtext class
-- [] Add pouch to qrtext class
-- [] Update pouch.py to use qrtext class
-- [X] V1/V2 cells stored differently, need alt query
+- [ ] Add pouch to qrtext class
+- [ ] Update pouch.py to use qrtext class
+- [x] V1/V2 cells stored differently, need alt query

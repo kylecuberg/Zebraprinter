@@ -6,7 +6,7 @@
 - [Writing Structure](https://docs.python-guide.org/writing/structure/)
 - [Google's Python Writing Guide](https://google.github.io/styleguide/pyguide.htm)
 
-## Common Commands
+## Common Commands [Windows Tested only]
 
 To create virtual environment:
 > py -m venv env

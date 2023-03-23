@@ -4,7 +4,7 @@ build-backend = 'setuptools.build_meta'
 
 [project]
 name = 'zebraPrinter'
-version = '2023.03.17'
+version = '2023.03.23'
 description = 'Intentionally left blank'
 requires-python = '>=3.7'
 license = {file = "LICENSE.txt"}
@@ -12,7 +12,7 @@ keywords = ['Python']
 authors = [{email = 'kylekaptbone@yahoo.com'},{name = 'Kyle Patterson'}]
 classifiers = ['Programming Language :: Python']
 dynamic = ['readme']
-dependencies = ['pyxlsb>=1.0.10', 'pandas>=1.5.2', 'SQLAlchemy=1.4.44','PyMySql>=1.0.2']
+dependencies = ['pyxlsb>=1.0.10', 'pandas>=1.5.2', 'SQLAlchemy<2.0','PyMySql>=1.0.2']
 
 [tool.setuptools.dynamic]
 readme = {file = ['README.md']}
