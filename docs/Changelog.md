@@ -1,5 +1,8 @@
 # Changelog
 
+2023_03_27
+    Update to add "_workorder" to differentiate from "_barcode" items to accomodate SN format change in SPARC
+
 2023_03_22
     Update to os.path.join(), and standardize wo printing logic to match cell.py
 
