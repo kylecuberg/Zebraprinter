@@ -132,12 +132,12 @@ class qr_text:
             ^XZ"""
         return self.qr
 
-    def sn_wo(self, cell, workorder):
+    def sn_workorder(self, cell, workorder):
         qr_loc = str(round(0.075 * self.dpi, 0)) + "," + str(round(0.2 * self.dpi, 0))
         cell_loc = str(round(0.665 * self.dpi, 0)) + "," + str(round(0.45 * self.dpi, 0))
         workorder_loc = str(round(0.665 * self.dpi, 0)) + "," + str(round(0.8 * self.dpi, 0))
         cell_text_size = str(round(0.2 * self.dpi, 0)) + "," + str(round(0.16 * self.dpi, 0))
-        workorder_text_size = str(round(0.2 * self.dpi, 0)) + "," + str(round(0.2 * self.dpi, 0))
+        workorder_text_size = str(round(0.2 * self.dpi, 0)) + "," + str(round(0.16 * self.dpi, 0))
         self.qr = f"""^XA
             ^FO{qr_loc},0^BQN,2,5,Q,7^FDQA,{cell}^FS
             ^CF0,{cell_text_size}^FO{cell_loc},0^FD{cell}^FS
@@ -145,9 +145,45 @@ class qr_text:
             ^XZ"""
         return self.qr
 
-    def boxlabel(self, lot, batch, cellformat, celllocation):
+    def sn_combo(self, cell, barcode, workorder, **kwargs):
+        """create sn zebra printer format text with cell_id, barcode, workorder
+
+        Args:
+            cell (str): name of cell
+            barcode (str): name of barcode / child
+            workorder (str): name of workorder
+
+        Returns:
+            str : string that represents the zebra printer code for the label
+        """
+        qr_loc = str(kwargs.get("qr_loc", str(round(0.075 * self.dpi, 0)) + "," + str(round(0.2 * self.dpi, 0))))
+        cell_loc = str(kwargs.get("cell_loc", str(round(0.665 * self.dpi, 0)) + "," + str(round(0.246 * self.dpi, 0))))
+        barcode_loc = str(
+            kwargs.get("barcode_loc", str(round(0.665 * self.dpi, 0)) + "," + str(round(0.542 * self.dpi, 0)))
+        )
+        workorder_loc = str(kwargs.get("", str(round(0.665 * self.dpi, 0)) + "," + str(round(0.739 * self.dpi, 0))))
+        cell_text_size = str(
+            kwargs.get("cell_text_size", str(round(0.2 * self.dpi, 0)) + "," + str(round(0.16 * self.dpi, 0)))
+        )
+        workorder_text_size = str(
+            kwargs.get("workorder_text_size", str(round(0.2 * self.dpi, 0)) + "," + str(round(0.2 * self.dpi, 0)))
+        )
+        barcode_text_size = str(
+            kwargs.get("barcode_text_size", str(round(0.2 * self.dpi, 0)) + "," + str(round(0.16 * self.dpi, 0)))
+        )
+        self.qr = f"""^XA
+            ^FO{qr_loc},0^BQN,2,5,Q,7^FDQA,{cell}^FS
+            ^CF0,{cell_text_size}^FO{cell_loc},0^FD{cell}^FS
+            ^CF0,{barcode_text_size}^FO{barcode_loc},0^FD{barcode}^FS
+            ^CF0,{workorder_text_size}^FO{workorder_loc},0^FD{workorder}^FS
+            ^XZ"""
+        return self.qr
+
+    def boxlabel(self, lot, batch, cellformat, celllocation, **kwargs):
         try:
-            text_size = f"{str(round(self.dpi * 0.3, 0))},{str(round(self.dpi * 0.256, 0))}"
+            text_size = str(
+                kwargs.get("text_size", f"{str(round(self.dpi * 0.3, 0))},{str(round(self.dpi * 0.256, 0))}")
+            )
             self.qr = f"""^XA
                     ^CF0,{text_size}^FO20,{str(0.1 * self.dpi)},0^FDLot:^FS
                     ^CF0,{text_size}^FO20,{str(0.6 * self.dpi)},0^FDBatch:^FS
@@ -165,9 +201,9 @@ class qr_text:
             print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
         return self.qr
 
-    def process_boxlabel(self, lot, batch, cellformat, celllocation, qty):
+    def process_boxlabel(self, lot, batch, cellformat, celllocation, qty, **kwargs):
         try:
-            text_size = f"{str(round(self.dpi * 0.3, 0))},{str(round(self.dpi * 0.3, 0))}"
+            text_size = str(kwargs.get("text_size", f"{str(round(self.dpi * 0.3, 0))},{str(round(self.dpi * 0.3, 0))}"))
             self.qr = f"""^XA
                     ^CF0,{text_size}^FO20,{str(0.1 * self.dpi)},0^FDLot:^FS
                     ^CF0,{text_size}^FO20,{str(0.5 * self.dpi)},0^FDBatch:^FS

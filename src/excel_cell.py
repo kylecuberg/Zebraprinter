@@ -20,18 +20,20 @@ if __name__ == "__main__":
         )
 
         for cell in cell_list:
-            cell = str(cell[0])
-
-            cell_list = sparc.select(
-                rf"""select thingname, workorder from sparc.thing where thingname like '{cell}' order by thingname desc"""
+            cell_items = sparc.select(
+                rf"""select t.thingname, t.workorder, CASE WHEN g.thingname like 'CHG%' THEN '' ELSE g.thingname END AS raw
+                from sparc.thing t
+                left join sparc.genealogy g on g.parentthingname = t.thingname
+                where t.thingname like '{cell}' order by t.thingname desc"""
             ).values.tolist()
 
-            for row in cell_list:
+            for row in cell_items:
                 cell = row[0]
                 workorder = row[1]
+                barcode = row[2]
 
                 label = util.qr_text(label_x=2, label_y=1, dpi=os.getenv("zt411_dpi", private.zt411_dpi))
-                z = util.zebra(qr=label.sn_wo(cell=cell, workorder=workorder))
+                z = util.zebra(qr=label.sn_combo(cell=cell, workorder=workorder, barcode=barcode))
                 z.send(
                     host=os.getenv("zt411_host", private.zt411_host), port=os.getenv("zt411_port", private.zt411_port)
                 )

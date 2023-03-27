@@ -21,19 +21,25 @@ if __name__ == "__main__":
 
         for wo in [wo_list]:
             wo = str(wo)
-            cell_list = sparc.select(
-                rf"""SELECT t.thingname, t.workorder FROM thing t
-                         where workorder like {wo} order by t.thingname desc"""
+            wo_list = sparc.select(
+                rf"""select t.thingname, t.workorder, CASE WHEN g.thingname like 'CHG%' THEN '' ELSE g.thingname END AS raw
+                from sparc.thing t
+                left join sparc.genealogy g on g.parentthingname = t.thingname
+                where t.workorder like '{wo}' order by t.thingname desc"""
             ).values.tolist()
 
-            for row in cell_list:
+            for row in wo_list:
                 cell = row[0]
                 workorder = row[1]
+                if row[2] != "":
+                    barcode = "Raw-" + row[2]
+                else:
+                    barcode = row[2]
 
                 label = util.qr_text(label_x=2, label_y=1, dpi=os.getenv("zt411_dpi", private.zt411_dpi))
-                z = util.zebra(qr=label.sn_wo(cell=cell, workorder=workorder))
+                z = util.zebra(qr=label.sn_combo(cell=cell, workorder=workorder, barcode=barcode))
                 z.send(
-                    host=os.get_env("zt411_host", private.zt411_host), port=os.get_env("zt411_port", private.zt411_port)
+                    host=os.getenv("zt411_host", private.zt411_host), port=os.getenv("zt411_port", private.zt411_port)
                 )
 
     except Exception as E:
