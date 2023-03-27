@@ -20,7 +20,7 @@ if __name__ == "__main__":
 
             label = util.qr_text(label_x=2, label_y=1, dpi=os.getenv("zt411_dpi", private.zt411_dpi))
             z = util.zebra(qr=label.sn_workorder(cell=cell, workorder=workorder))
-            z.send(host=os.get_env("zt411_host", private.zt411_host), port=os.get_env("zt411_port", private.zt411_port))
+            z.send(host=os.getenv("zt411_host", private.zt411_host), port=os.getenv("zt411_port", private.zt411_port))
 
     except Exception as E:
         print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)

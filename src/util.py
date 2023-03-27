@@ -137,11 +137,11 @@ class qr_text:
         cell_loc = str(round(0.665 * self.dpi, 0)) + "," + str(round(0.45 * self.dpi, 0))
         workorder_loc = str(round(0.665 * self.dpi, 0)) + "," + str(round(0.8 * self.dpi, 0))
         cell_text_size = str(round(0.2 * self.dpi, 0)) + "," + str(round(0.16 * self.dpi, 0))
-        workorder_text_size = str(round(0.1 * self.dpi, 0)) + "," + str(round(0.1 * self.dpi, 0))
+        workorder_text_size = str(round(0.2 * self.dpi, 0)) + "," + str(round(0.2 * self.dpi, 0))
         self.qr = f"""^XA
             ^FO{qr_loc},0^BQN,2,5,Q,7^FDQA,{cell}^FS
             ^CF0,{cell_text_size}^FO{cell_loc},0^FD{cell}^FS
-            ^CF0,{workorder_text_size}^FO{workorder_loc},0^FDRaw-{workorder}^FS
+            ^CF0,{workorder_text_size}^FO{workorder_loc},0^FD{workorder}^FS
             ^XZ"""
         return self.qr
 
