@@ -119,7 +119,7 @@ class qr_text:
         except Exception as E:
             print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
 
-    def sn(self, cell, barcode):
+    def sn_barcode(self, cell, barcode):
         qr_loc = str(round(0.075 * self.dpi, 0)) + "," + str(round(0.2 * self.dpi, 0))
         cell_loc = str(round(0.665 * self.dpi, 0)) + "," + str(round(0.45 * self.dpi, 0))
         barcode_loc = str(round(0.665 * self.dpi, 0)) + "," + str(round(0.8 * self.dpi, 0))
@@ -129,6 +129,19 @@ class qr_text:
             ^FO{qr_loc},0^BQN,2,5,Q,7^FDQA,{cell}^FS
             ^CF0,{cell_text_size}^FO{cell_loc},0^FD{cell}^FS
             ^CF0,{barcode_text_size}^FO{barcode_loc},0^FDRaw-{barcode}^FS
+            ^XZ"""
+        return self.qr
+
+    def sn_wo(self, cell, workorder):
+        qr_loc = str(round(0.075 * self.dpi, 0)) + "," + str(round(0.2 * self.dpi, 0))
+        cell_loc = str(round(0.665 * self.dpi, 0)) + "," + str(round(0.45 * self.dpi, 0))
+        workorder_loc = str(round(0.665 * self.dpi, 0)) + "," + str(round(0.8 * self.dpi, 0))
+        cell_text_size = str(round(0.2 * self.dpi, 0)) + "," + str(round(0.16 * self.dpi, 0))
+        workorder_text_size = str(round(0.1 * self.dpi, 0)) + "," + str(round(0.1 * self.dpi, 0))
+        self.qr = f"""^XA
+            ^FO{qr_loc},0^BQN,2,5,Q,7^FDQA,{cell}^FS
+            ^CF0,{cell_text_size}^FO{cell_loc},0^FD{cell}^FS
+            ^CF0,{workorder_text_size}^FO{workorder_loc},0^FDRaw-{workorder}^FS
             ^XZ"""
         return self.qr
 
