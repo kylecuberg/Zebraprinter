@@ -1,5 +1,8 @@
 # Changelog
 
+2023_03_27.1
+    Create & standardizezd to generalized_cell.py
+
 2023_03_27
     Update to QR format to accomodate SN format change in SPARC
 

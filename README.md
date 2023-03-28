@@ -76,3 +76,4 @@ NOTE: These execution methods have only been validated on Windows.
 - [ ] Add pouch to qrtext class
 - [ ] Update pouch.py to use qrtext class
 - [x] V1/V2 cells stored differently, need alt query
+- [ ] Reduce util.qr_text() size
