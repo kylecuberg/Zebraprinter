@@ -206,7 +206,7 @@ class qr_text:
             text_size = str(kwargs.get("text_size", f"{str(round(self.dpi * 0.3, 0))},{str(round(self.dpi * 0.3, 0))}"))
             self.qr = f"""^XA
                     ^CF0,{text_size}^FO20,{str(0.1 * self.dpi)},0^FDLot:^FS
-                    ^CF0,{text_size}^FO20,{str(0.5 * self.dpi)},0^FDBatch:^FS
+                    ^CF0,{text_size}^FO20,{str(0.5 * self.dpi)},0^FDNote:^FS
                     ^CF0,{text_size}^FO20,{str(0.9 * self.dpi)},0^FDFormat:^FS
                     ^CF0,{text_size}^FO20,{str(1.3 * self.dpi)},0^FDLocation:^FS
                     ^CF0,{text_size}^FO20,{str(1.7 * self.dpi)},0^FDQty:^FS

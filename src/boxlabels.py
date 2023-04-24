@@ -19,13 +19,20 @@ if __name__ == "__main__":
 
         while True:
             cell = "".join(str(input("Please type in cell_id to print box label for: ")).split())
+            cell_no_pn = cell.split(":", 1)[1]
 
             cell_list = sparc.select(
-                rf"""select i.lot, coalesce(r.batch,'N/A'), i.cellformat, i.location
-                                     from sparc.incomingcell i
-                                     left join sparc.receiving r on r.po = i.po and r.lp = i.lp
-                                     where i.barcode like '{cell}'
-                                     group by i.lot, i.cellformat, i.location, r.batch"""
+                rf"""select workorder, 'N/A' as batch, p.partnumber, location
+                from sparc.thing t
+                inner join sparc.part p on p.id = t.partid
+                where t.thingname like '%{cell_no_pn}'
+                Group by workorder, p.partnumber, location
+                UNION
+                select i.lot as workorder, coalesce(r.batch,'N/A') as batch, i.cellformat as partnumber, i.location
+                from sparc.incomingcell i
+                left join sparc.receiving r on r.po = i.po and r.lp = i.lp
+                where i.barcode like '%{cell}'
+                group by i.lot, i.cellformat, i.location, r.batch"""
             ).values.tolist()
 
             for row in cell_list:

@@ -22,7 +22,7 @@ if __name__ == "__main__":
             qty = "".join(str(input("Please type in the QUANTITY of cells in the box:  ")).split())
 
             cell_list = sparc.select(
-                rf"""select workorder, 'N/A' as batch, p.partnumber, location
+                rf"""select workorder, '' as batch, p.partnumber, location
                 from sparc.thing t
                 inner join sparc.part p on p.id = t.partid
                 where CONCAT(p.partnumber,':',t.thingname) like '{cell}'
@@ -38,6 +38,9 @@ if __name__ == "__main__":
                 label = util.qr_text(label_x=3, label_y=2, dpi=os.getenv("zt421_dpi", private.zt421_dpi))
                 qr = label.process_boxlabel(lot, batch, cellformat, celllocation, qty)
                 z = util.zebra(qr)
+                z.send(
+                    host=os.getenv("zt421_host", private.zt421_host), port=os.getenv("zt421_port", private.zt421_port)
+                )
                 z.send(
                     host=os.getenv("zt421_host", private.zt421_host), port=os.getenv("zt421_port", private.zt421_port)
                 )
