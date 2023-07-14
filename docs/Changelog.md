@@ -1,5 +1,8 @@
 # Changelog
 
+2023_07_14
+    Added EL component label printing EL_label.py
+
 2023_03_27.1
     Create & standardizezd to generalized_cell.py
 
