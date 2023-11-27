@@ -31,6 +31,8 @@ This project is intended to meet the requirements of PEP-518 and PEP-621, removi
 Python 3.10+ is the currently supported version.
 If you wish to change this, you may use any version >3.7, but if you plan to edit, the version of python must be updated in the pyproject.toml in the "target_version" under tool.black
 
+This project also requires a virtual environment, installed in the "env" folder, and will utilize the python.exe within that & the modules installed at that location. See the common commands in docs/Resources.md for instructions.
+
 ## Installation - Windows
 
 1. Make sure computer has Python installed (Version must be >= 3.7, 3.10 is preferred) & you know the location of the python executable file.

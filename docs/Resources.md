@@ -18,6 +18,8 @@ To install project
 > py -m pip install .
 > py -m pip install .[dev]
 
+### Pre-commit, only required if changes will be made / sync back to github
+
 Pre-commit setup after install of project
 > pre-commit install
 > pre-commit autoupdate
