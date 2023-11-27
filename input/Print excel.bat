@@ -1,3 +1,3 @@
 @echo off
-python "%~dp0..\src\generalized_cell.py" excel
+"%~dp0..\env\Scripts\python.exe" "%~dp0..\src\generalized_cell.py" excel
 pause

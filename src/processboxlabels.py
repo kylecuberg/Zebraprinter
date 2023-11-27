@@ -22,10 +22,11 @@ if __name__ == "__main__":
             qty = "".join(str(input("Please type in the QUANTITY of cells in the box:  ")).split())
 
             cell_list = sparc.select(
-                rf"""select workorder, '' as batch, p.partnumber, location
+                rf"""select workorder, 'N/A' as batch, p.partnumber, location
                 from sparc.thing t
                 inner join sparc.part p on p.id = t.partid
                 where CONCAT(p.partnumber,':',t.thingname) like '{cell}'
+                or t.thingname like '{cell}'
                 group by workorder, p.partnumber, location"""
             ).values.tolist()
 

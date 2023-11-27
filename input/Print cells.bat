@@ -1,3 +1,3 @@
 @echo off
-python "%~dp0..\src\generalized_cell.py" manual
+"%~dp0..\env\Scripts\python.exe" "%~dp0..\src\generalized_cell.py" manual
 pause

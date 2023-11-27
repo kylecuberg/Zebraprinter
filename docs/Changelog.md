@@ -1,5 +1,10 @@
 # Changelog
 
+2023_11_27
+    updated to "%~dp0..\env\Scripts\python.exe" to find the local python installation, based on the GITHUB guide
+    ProcessBoxLabels now searches for non-PN leading items as well
+    Remove support for excel file based printing
+
 2023_07_14
     Added EL component label printing EL_label.py
 

@@ -1,3 +1,3 @@
 @echo off
-python "%~dp0..\src\processboxlabels.py"
+"%~dp0..\env\Scripts\python.exe" "%~dp0..\src\processboxlabels.py"
 pause
