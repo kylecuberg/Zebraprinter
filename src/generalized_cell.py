@@ -98,9 +98,9 @@ class generalized_barcode_generation:
             _type_: _description_
         """
         dpi = kwargs.get("dpi", self.dpi)
-        qr_loc = str(kwargs.get("qr_loc", str(round(0.080 * dpi, 0)) + "," + str(round(0.200 * dpi, 0))))
-        cell_loc = str(kwargs.get("cell_loc", str(round(0.665 * dpi, 0)) + "," + str(round(0.246 * dpi, 0))))
-        barcode_loc = str(kwargs.get("barcode_loc", str(round(0.665 * dpi, 0)) + "," + str(round(0.542 * dpi, 0))))
+        qr_loc = str(kwargs.get("qr_loc", str(round(0.250 * dpi, 0)) + "," + str(round(0.200 * dpi, 0))))
+        cell_loc = str(kwargs.get("cell_loc", str(round(0.800 * dpi, 0)) + "," + str(round(0.246 * dpi, 0))))
+        barcode_loc = str(kwargs.get("barcode_loc", str(round(0.800 * dpi, 0)) + "," + str(round(0.575 * dpi, 0))))
         workorder_loc = str(kwargs.get("workorder_loc", str(round(0.665 * dpi, 0)) + "," + str(round(0.739 * dpi, 0))))
         cell_text_size = str(
             kwargs.get("cell_text_size", str(round(0.200 * dpi, 0)) + "," + str(round(0.180 * dpi, 0)))
@@ -112,7 +112,7 @@ class generalized_barcode_generation:
             kwargs.get("workorder_text_size", str(round(0.200 * dpi, 0)) + "," + str(round(0.180 * dpi, 0)))
         )
         self.qr = f"""^XA
-            ^FO{qr_loc},0^BQN,2,2,Q,7^FDQA,{kwargs.get("cell", "")}^FS
+            ^FO{qr_loc},0^BQN,2,4,Q,7^FDQA,{kwargs.get("cell", "")}^FS
             ^CF0,{cell_text_size}^FO{cell_loc},0^FB250,8,0,L,0^FD{kwargs.get("cell", "")}^FS
             ^CF0,{barcode_text_size}^FO{barcode_loc},0^FD{kwargs.get("barcode", "")}^FS
             ^CF0,{workorder_text_size}^FO{workorder_loc},0^FD{kwargs.get("workorder", "")}^FS
