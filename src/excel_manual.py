@@ -5,6 +5,8 @@ import os
 import private
 import util
 
+# # # DEPRECIATED # # #
+
 if __name__ == "__main__":
     """[summary]"""
 

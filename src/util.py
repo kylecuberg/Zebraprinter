@@ -13,9 +13,9 @@ import private
 
 
 class zebra:
-    def __init__(self, qr, conn_type="ip"):
+    def __init__(self, qr, **kwargs):
         self.qr = qr
-        self.conn_type = conn_type
+        self.conn_type = kwargs.get("conn_type", "ip")
 
     def _check_host_port(self, host, port):
         if host == "":
@@ -25,22 +25,18 @@ class zebra:
         return host, port
 
     def create_ip_conn(self, **kwargs):
-        host = kwargs.get("host", "")
-        port = kwargs.get("port", "")
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            host, port = self._check_host_port(host, port)
+            host, port = self._check_host_port(kwargs.get("host", ""), kwargs.get("port", ""))
             sock.connect((host, int(port)))
         except Exception as E:
             print(type(E).__name__, __file__, E.__traceback__.tb_lineno, "\n", E)
         return sock
 
     def create_blue_conn(self, **kwargs):
-        host = kwargs.get("host", "")
-        port = kwargs.get("port", "")
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            host, port = self._check_host_port(host, port)
+            host, port = self._check_host_port(kwargs.get("host", ""), kwargs.get("port", ""))
             sock.connect((host, int(port)))
         except Exception as E:
             print(type(E).__name__, __file__, E.__traceback__.tb_lineno, "\n", E)

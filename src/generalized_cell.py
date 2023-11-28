@@ -22,22 +22,34 @@ class generalized_barcode_generation:
     def excel_based(self, filename="Print_File.xlsb"):
         try:
             item_list = util.loop_xlsb_file(os.path.abspath(os.path.join(os.pardir(), "input", filename)), columns=1)
-            if type(item_list) != list:
+            if item_list is list:
                 item_list = [item_list]
             self.zitems = self.item_check(item_list)
         except Exception as E:
             print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
         return item_list
 
-    def manual(self, value=None):
+    def manual(self, value=None, check_override=False, **kwargs):
         try:
             if value is None:
                 item_list = [
-                    "".join(str(input("Please type in Workorder, Barcode OR Cell_ID to print labels for: ")).strip())
+                    "".join(
+                        str(
+                            input(
+                                kwargs.get(
+                                    "string_override",
+                                    "Please type in Workorder, Barcode OR Cell_ID to print labels for: ",
+                                )
+                            )
+                        ).strip()
+                    )
                 ]
             else:
                 item_list = [value]
-            self.zitems = self.item_check(item_list)
+            if not check_override:
+                self.zitems = self.item_check(item_list)
+            else:
+                self.zitems = self.L2_items(item_list)
         except Exception as E:
             print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
         return item_list
@@ -70,7 +82,21 @@ class generalized_barcode_generation:
             print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
         return d
 
+    def L2_items(self, item_list):
+        d = {}
+        try:
+            for item in item_list:
+                d[item] = {"workorder": "", "barcode": ""}
+        except Exception as E:
+            print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
+        return d
+
     def zebra_text(self, **kwargs):
+        """Zebra printer configuration
+            **kwargs: qr_loc, cell_loc, barcode_loc, workorder_loc, cell_text_size, barcode_text_size, workorder_text_size
+        Returns:
+            _type_: _description_
+        """
         dpi = kwargs.get("dpi", self.dpi)
         qr_loc = str(kwargs.get("qr_loc", str(round(0.080 * dpi, 0)) + "," + str(round(0.200 * dpi, 0))))
         cell_loc = str(kwargs.get("cell_loc", str(round(0.665 * dpi, 0)) + "," + str(round(0.246 * dpi, 0))))
@@ -86,8 +112,8 @@ class generalized_barcode_generation:
             kwargs.get("workorder_text_size", str(round(0.200 * dpi, 0)) + "," + str(round(0.180 * dpi, 0)))
         )
         self.qr = f"""^XA
-            ^FO{qr_loc},0^BQN,2,5,Q,7^FDQA,{kwargs.get("cell", "")}^FS
-            ^CF0,{cell_text_size}^FO{cell_loc},0^FD{kwargs.get("cell", "")}^FS
+            ^FO{qr_loc},0^BQN,2,2,Q,7^FDQA,{kwargs.get("cell", "")}^FS
+            ^CF0,{cell_text_size}^FO{cell_loc},0^FB250,8,0,L,0^FD{kwargs.get("cell", "")}^FS
             ^CF0,{barcode_text_size}^FO{barcode_loc},0^FD{kwargs.get("barcode", "")}^FS
             ^CF0,{workorder_text_size}^FO{workorder_loc},0^FD{kwargs.get("workorder", "")}^FS
             ^XZ"""
@@ -103,7 +129,8 @@ class generalized_barcode_generation:
                     label_x=self.label_x,
                     label_y=self.label_y,
                     **kwargs,
-                )
+                ),
+                **kwargs,
             )
             z.send(
                 host=os.getenv(self.printer + "_host", private.zt411_host),
@@ -129,13 +156,21 @@ def excel():
     gbg.send()
 
 
+def L2():
+    gbg = generalized_barcode_generation(printer="l2")
+    while True:
+        gbg.manual(check_override=True, string_override="Type in what to print: ")
+        gbg.send()
+        gbg.reset()
+
+
 if __name__ == "__main__":
     """[summary]"""
     try:
         globals()[sys.argv[1]]()
     except Exception as E:
-        gbg = generalized_barcode_generation()
-        gbg.manual("SLEV230324292")
-        gbg.send()
-        gbg.reset()
+        # gbg = generalized_barcode_generation()
+        # gbg.manual(value="SLEV230324292")
+        # gbg.send()
+        # gbg.reset()
         print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
