@@ -1,10 +1,10 @@
 # Standard library
-import csv
-import os
-import socket
+from csv import reader
+from os import getenv
+from socket import AF_INET, SOCK_STREAM, socket
 
 # Third-party
-import pandas as pd
+from pandas import read_sql_query
 from pyxlsb import open_workbook
 from sqlalchemy import create_engine
 
@@ -19,14 +19,14 @@ class zebra:
 
     def _check_host_port(self, host, port):
         if host == "":
-            host = os.getenv("ops_host", private.zt411_host)
+            host = getenv("ops_host", private.zt411_host)
         if port == "":
-            port = int(os.getenv("ops_port", private.zt411_port))
+            port = int(getenv("ops_port", private.zt411_port))
         return host, port
 
     def create_ip_conn(self, **kwargs):
         try:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock = socket(AF_INET, SOCK_STREAM)
             host, port = self._check_host_port(kwargs.get("host", ""), kwargs.get("port", ""))
             sock.connect((host, int(port)))
         except Exception as E:
@@ -35,7 +35,7 @@ class zebra:
 
     def create_blue_conn(self, **kwargs):
         try:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock = socket(AF_INET, SOCK_STREAM)
             host, port = self._check_host_port(kwargs.get("host", ""), kwargs.get("port", ""))
             sock.connect((host, int(port)))
         except Exception as E:
@@ -57,7 +57,7 @@ class zebra:
 def loop_csv_file(filename):
     lines = []
     with open(filename) as read_obj:
-        for row in csv.reader(read_obj):
+        for row in reader(read_obj):
             lines.append(row)
     return lines
 
@@ -101,7 +101,7 @@ class MySQL:
             Dataframe: Query results
         """
         try:
-            df = pd.read_sql_query(query_text, con=self.engine)
+            df = read_sql_query(query_text, con=self.engine)
         except Exception as E:
             print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
             df = None

@@ -1,5 +1,5 @@
 # Standard library
-import os
+from os import getenv
 
 # First-party/Local
 import private
@@ -11,10 +11,10 @@ if __name__ == "__main__":
     try:
         # get from sql
         sparc = util.MySQL(
-            os.getenv("mysql_user", private.mysql_user),
-            os.getenv("mysql_password", private.mysql_password),
-            os.getenv("mysql_host", private.mysql_host),
-            database=os.getenv("mysql_database", "sparc"),
+            getenv("mysql_user", private.mysql_user),
+            getenv("mysql_password", private.mysql_password),
+            getenv("mysql_host", private.mysql_host),
+            database=getenv("mysql_database", "sparc"),
         )
 
         while True:
@@ -43,9 +43,7 @@ if __name__ == "__main__":
 
                 label = util.qr_text(dpi=300, label_x=3, label_y=2)
                 z = util.zebra(qr=label.boxlabel(lot, batch, cellformat, celllocation))
-                z.send(
-                    host=os.getenv("zt421_host", private.zt421_host), port=os.getenv("zt421_port", private.zt421_port)
-                )
+                z.send(host=getenv("zt421_host", private.zt421_host), port=getenv("zt421_port", private.zt421_port))
 
     except Exception as E:
         print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)

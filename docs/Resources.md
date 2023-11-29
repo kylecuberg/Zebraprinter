@@ -24,6 +24,11 @@ Pre-commit setup after install of project
 > pre-commit install
 > pre-commit autoupdate
 
+### Making a new executable
+
+> pyinstaller -F application_files\L2_dryroom.py
+> pyinstaller -F application_files\cell_printing_application.py
+
 ## Before commiting
 
 1. Pre-commit check

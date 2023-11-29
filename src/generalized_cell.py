@@ -1,6 +1,6 @@
 # Standard library
-import os
-import sys
+from os import getenv, pardir, path
+from sys import argv
 
 # First-party/Local
 import private
@@ -21,7 +21,7 @@ class generalized_barcode_generation:
 
     def excel_based(self, filename="Print_File.xlsb"):
         try:
-            item_list = util.loop_xlsb_file(os.path.abspath(os.path.join(os.pardir(), "input", filename)), columns=1)
+            item_list = util.loop_xlsb_file(path.abspath(path.join(pardir(), "input", filename)), columns=1)
             if item_list is list:
                 item_list = [item_list]
             self.zitems = self.item_check(item_list)
@@ -58,10 +58,10 @@ class generalized_barcode_generation:
         d = {}
         try:
             sparc = util.MySQL(
-                os.getenv("mysql_user", private.mysql_user),
-                os.getenv("mysql_password", private.mysql_password),
-                os.getenv("mysql_host", private.mysql_host),
-                database=os.getenv("mysql_database", "sparc"),
+                getenv("mysql_user", private.mysql_user),
+                getenv("mysql_password", private.mysql_password),
+                getenv("mysql_host", private.mysql_host),
+                database=getenv("mysql_database", "sparc"),
             )
 
             for item in item_list:
@@ -133,8 +133,8 @@ class generalized_barcode_generation:
                 **kwargs,
             )
             z.send(
-                host=os.getenv(self.printer + "_host", private.zt411_host),
-                port=os.getenv(self.printer + "_port", private.zt411_port),
+                host=getenv(self.printer + "_host", private.zt411_host),
+                port=getenv(self.printer + "_port", private.zt411_port),
             )
 
     def reset(self):
@@ -167,7 +167,7 @@ def L2():
 if __name__ == "__main__":
     """[summary]"""
     try:
-        globals()[sys.argv[1]]()
+        globals()[argv[1]]()
     except Exception as E:
         # gbg = generalized_barcode_generation()
         # gbg.manual(value="SLEV230324292")

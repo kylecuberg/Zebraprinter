@@ -1,5 +1,5 @@
 # Standard library
-import os
+from os import getenv
 
 # First-party/Local
 import private
@@ -32,6 +32,6 @@ if __name__ == "__main__":
         z = util.zebra(qr=qr)
         for ea in range(1, copies + 1):
             z.send(
-                host=os.getenv("zt411_host", str(private.zt411_host)),
-                port=os.getenv("zt411_port", str(private.zt411_port)),
+                host=getenv("zt411_host", str(private.zt411_host)),
+                port=getenv("zt411_port", str(private.zt411_port)),
             )
