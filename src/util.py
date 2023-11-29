@@ -43,12 +43,15 @@ class zebra:
         return sock
 
     def send(self, **kwargs):
-        if self.conn_type == "ip":
-            self.sock = self.create_ip_conn(host=kwargs.get("host", ""), port=kwargs.get("port", ""))
-        elif self.conn_type == "bluetooth":
-            self.sock = self.create_blue_conn(host=kwargs.get("host", ""), port=kwargs.get("port", ""))
-        self.sock.send(bytes(self.qr, "utf-8"))  # using bytes
-        self.sock.close()
+        try:
+            if self.conn_type == "ip":
+                self.sock = self.create_ip_conn(host=kwargs.get("host", ""), port=kwargs.get("port", ""))
+            elif self.conn_type == "bluetooth":
+                self.sock = self.create_blue_conn(host=kwargs.get("host", ""), port=kwargs.get("port", ""))
+            self.sock.send(bytes(self.qr, "utf-8"))  # using bytes
+            self.sock.close()
+        except Exception as E:
+            print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
 
 
 def loop_csv_file(filename):
