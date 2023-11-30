@@ -8,7 +8,7 @@ import util
 
 
 class generalized_barcode_generation:
-    def __init__(self, label_x=2, label_y=1, dpi=203, printer="zt411"):
+    def __init__(self, label_x=2, label_y=1, dpi=203):
         """create zebra printer string for the barcode labels.
         Run .wo_based, .excel_based, or .manual to generate the entry.
         Run .send to create the individual zebra strings & print
@@ -16,7 +16,6 @@ class generalized_barcode_generation:
         self.label_x = int(label_x)
         self.label_y = int(label_y)
         self.dpi = int(dpi)
-        self.printer = str(printer)
         self.zitems = {}
 
     def excel_based(self, filename="Print_File.xlsb"):
@@ -29,7 +28,7 @@ class generalized_barcode_generation:
             print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
         return item_list
 
-    def manual(self, value=None, check_override=False, **kwargs):
+    def entered(self, value=None, check_override=False, **kwargs):
         try:
             if value is None:
                 item_list = [
@@ -82,7 +81,7 @@ class generalized_barcode_generation:
             print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
         return d
 
-    def L2_items(self, item_list):
+    def manual_items(self, item_list):
         d = {}
         try:
             for item in item_list:
@@ -120,22 +119,23 @@ class generalized_barcode_generation:
         return self.qr
 
     def send(self, **kwargs):
-        for key, item in self.zitems.items():
-            z = util.zebra(
-                qr=self.zebra_text(
+        z = util.zebra("", **kwargs)
+        if "qr" in kwargs:
+            z.qr = kwargs.get("qr", "")
+            z.send(host=kwargs.get("host", private.zt411_host), port=kwargs.get("port", private.zt411_port), **kwargs)
+        else:
+            for key, item in self.zitems.items():
+                z.qr = self.zebra_text(
                     cell=key,
                     barcode=item.get("barcode", ""),
                     workorder=item.get("workorder", ""),
                     label_x=self.label_x,
                     label_y=self.label_y,
                     **kwargs,
-                ),
-                **kwargs,
-            )
-            z.send(
-                host=getenv(self.printer + "_host", private.zt411_host),
-                port=getenv(self.printer + "_port", private.zt411_port),
-            )
+                )
+                z.send(
+                    host=kwargs.get("host", private.zt411_host), port=kwargs.get("port", private.zt411_port), **kwargs
+                )
 
     def reset(self):
         self.zitems = {}
@@ -156,21 +156,13 @@ def excel():
     gbg.send()
 
 
-def L2():
-    gbg = generalized_barcode_generation(printer="l2")
-    while True:
-        gbg.manual(check_override=True, string_override="Type in what to print: ")
-        gbg.send()
-        gbg.reset()
-
-
-if __name__ == "__main__":
-    """[summary]"""
+def main():
     try:
         globals()[argv[1]]()
     except Exception as E:
-        # gbg = generalized_barcode_generation()
-        # gbg.manual(value="SLEV230324292")
-        # gbg.send()
-        # gbg.reset()
         print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
+        input("Press Enter to close")
+
+
+if __name__ == "__main__":
+    main()

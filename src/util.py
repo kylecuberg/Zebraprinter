@@ -7,6 +7,7 @@ from socket import AF_INET, SOCK_STREAM, socket
 from pandas import read_sql_query
 from pyxlsb import open_workbook
 from sqlalchemy import create_engine
+from zebra import Zebra
 
 # First-party/Local
 import private
@@ -15,6 +16,7 @@ import private
 class zebra:
     def __init__(self, qr, **kwargs):
         self.qr = qr
+        self.name = kwargs.get("printer_name", "")
         self.conn_type = kwargs.get("conn_type", "ip")
 
     def _check_host_port(self, host, port):
@@ -44,7 +46,12 @@ class zebra:
 
     def send(self, **kwargs):
         try:
-            if self.conn_type == "ip":
+            if self.conn_type == "name":
+                z = Zebra()
+                z.setqueue(self.name)
+                z.output(self.qr)
+                return None
+            elif self.conn_type == "ip":
                 self.sock = self.create_ip_conn(host=kwargs.get("host", ""), port=kwargs.get("port", ""))
             elif self.conn_type == "bluetooth":
                 self.sock = self.create_blue_conn(host=kwargs.get("host", ""), port=kwargs.get("port", ""))

@@ -6,8 +6,9 @@ if __name__ == "__main__":
     try:
         gbg = generalized_cell.generalized_barcode_generation()
         while True:
-            gbg.manual()
+            gbg.entered()
             gbg.send()
             gbg.reset()
     except Exception as E:
         print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
+        input("Press Enter to close")
