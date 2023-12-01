@@ -48,10 +48,16 @@ class generalized_barcode_generation:
             if not check_override:
                 self.zitems = self.item_check(item_list)
             else:
-                self.zitems = self.L2_items(item_list)
+                self.zitems = self.no_check(item_list)
         except Exception as E:
             print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
         return item_list
+
+    def no_check(self, item_list):
+        d = {}
+        for item in item_list:
+            d[item] = {"workorder": "", "barcode": ""}
+        return d
 
     def item_check(self, item_list):
         d = {}
