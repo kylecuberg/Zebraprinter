@@ -26,8 +26,7 @@ Pre-commit setup after install of project
 
 ### Making a new executable
 
-> pyinstaller -F application_files\L2_dryroom.py
-> pyinstaller -F application_files\cell_printing_application.py
+> pyinstaller -F {filename.py}
 
 ## Before commiting
 
