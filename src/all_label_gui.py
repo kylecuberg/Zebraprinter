@@ -1,5 +1,8 @@
 # Third-party
-import PySimpleGUI as sg
+
+# Third-party
+from PySimpleGUI import WIN_CLOSED, Button, InputText, Text, Window
+from PySimpleGUI import theme as sgtheme
 
 # First-party/Local
 from generalized_cell import generalized_barcode_generation
@@ -14,17 +17,17 @@ from private import zt421_dpi, zt421_host, zt421_port
 
 class combined_gui:
     def __init__(self, theme="Dark"):
-        sg.theme(theme)
-        self.main_window = sg.Window(
+        sgtheme(theme)
+        self.main_window = Window(
             "Label Printing",
             [
-                [sg.Text("Select the type of printing you wish to do")],
-                [sg.Button("Production boxes"), sg.Button("Process boxes"), sg.Button("Cell"), sg.Button("EL")],
+                [Text("Select the type of printing you wish to do")],
+                [Button("Production boxes"), Button("Process boxes"), Button("Cell"), Button("EL")],
             ],
         )
         while True:
             event, values = self.main_window.read()
-            if event == "Exit" or event == sg.WIN_CLOSED:
+            if event == "Exit" or event == WIN_CLOSED:
                 break
             elif event == "Production boxes":
                 self._production_boxes()
@@ -37,12 +40,12 @@ class combined_gui:
         self.main_window.close()
 
     def _cell(self):
-        self._cell_window = sg.Window(
+        self._cell_window = Window(
             "Cell Layout",
             [
-                [sg.Text("Enter text to print")],
-                [sg.Text("Text", size=(20, 2)), sg.InputText(do_not_clear=False)],
-                [sg.Button("Dryroom Print"), sg.Button("Cage Print")],
+                [Text("Enter text to print")],
+                [Text("Text", size=(20, 2)), InputText(do_not_clear=False)],
+                [Button("Dryroom Print"), Button("Cage Print")],
             ],
         )
         gbg = generalized_barcode_generation()
@@ -50,7 +53,7 @@ class combined_gui:
             try:
                 event, values = self._cell_window.read()
                 print(event, values)
-                if event == "Exit" or event == sg.WIN_CLOSED:
+                if event == "Exit" or event == WIN_CLOSED:
                     break
                 elif event == "Dryroom Print":
                     gbg.entered(check_override=True, value=values[0])
@@ -65,13 +68,13 @@ class combined_gui:
         self._cell_window = None
 
     def _production_boxes(self):
-        self._box_window = sg.Window(
+        self._box_window = Window(
             "Box Layout",
             [
-                [sg.Text("Please type in cell_id to print box label for: ")],
-                [sg.Text("Text", size=(20, 2)), sg.InputText(do_not_clear=False)],
-                [sg.Button("Print Label")],
-                [sg.Text("*Note, cell_id must be in 'PN:SN' format!")],
+                [Text("Please type in cell_id to print box label for: ")],
+                [Text("Text", size=(20, 2)), InputText(do_not_clear=False)],
+                [Button("Print Label")],
+                [Text("*Note, cell_id must be in 'PN:SN' format!")],
             ],
         )
         gbg = generalized_barcode_generation()
@@ -79,7 +82,7 @@ class combined_gui:
             try:
                 event, values = self._box_window.read()
                 print(event, values)
-                if event == "Exit" or event == sg.WIN_CLOSED:
+                if event == "Exit" or event == WIN_CLOSED:
                     break
                 elif event == "Print Label":
                     gbg.productionboxlabel(values[0])
@@ -92,19 +95,19 @@ class combined_gui:
         self._box_window = None
 
     def _process_boxes(self):
-        self._box_window = sg.Window(
+        self._box_window = Window(
             "Box Layout",
             [
                 [
-                    sg.Text("Please type in cell_id to print box label for: ", size=(20, 2)),
-                    sg.InputText(do_not_clear=False),
+                    Text("Please type in cell_id to print box label for: ", size=(20, 2)),
+                    InputText(do_not_clear=False),
                 ],
                 [
-                    sg.Text("Please type in QUANTITY to print box label for: ", size=(20, 2)),
-                    sg.InputText(do_not_clear=False),
+                    Text("Please type in QUANTITY to print box label for: ", size=(20, 2)),
+                    InputText(do_not_clear=False),
                 ],
-                [sg.Button("Print Label")],
-                [sg.Text("*Note, cell_id must be in 'PN:SN' format!")],
+                [Button("Print Label")],
+                [Text("*Note, cell_id must be in 'PN:SN' format!")],
             ],
         )
         gbg = generalized_barcode_generation()
@@ -112,7 +115,7 @@ class combined_gui:
             try:
                 event, values = self._box_window.read()
                 print(event, values)
-                if event == "Exit" or event == sg.WIN_CLOSED:
+                if event == "Exit" or event == WIN_CLOSED:
                     break
                 elif event == "Print Label":
                     gbg.processboxlabel(values[0], values[1])
@@ -125,12 +128,12 @@ class combined_gui:
         self._box_window = None
 
     def _el(self):
-        self._el_window = sg.Window(
+        self._el_window = Window(
             "EL Layout",
             [
-                [sg.Text("Pick the Option to print")],
-                [sg.Button("Set 1"), sg.Button("Set 2"), sg.Button("Set 3"), sg.Button("Text")],
-                [sg.Text("Text", size=(20, 2)), sg.InputText(do_not_clear=False)],
+                [Text("Pick the Option to print")],
+                [Button("Set 1"), Button("Set 2"), Button("Set 3"), Button("Text")],
+                [Text("Text", size=(20, 2)), InputText(do_not_clear=False)],
             ],
         )
         gbg = generalized_barcode_generation()
@@ -139,7 +142,7 @@ class combined_gui:
             try:
                 event, values = self._el_window.read()
                 print(event, values)
-                if event == "Exit" or event == sg.WIN_CLOSED:
+                if event == "Exit" or event == WIN_CLOSED:
                     break
                 elif event == "Set 1":
                     qr = r"""^XA
