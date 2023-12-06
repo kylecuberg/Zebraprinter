@@ -1,10 +1,21 @@
 # Standard library
-from os import getenv, pardir, path
-from sys import argv
+from os import getenv
+from socket import AF_INET, SOCK_STREAM, socket
+
+# Third-party
+from pandas import read_sql_query
+from sqlalchemy import create_engine, text
+from zebra import Zebra
 
 # First-party/Local
-import private
-import util
+from private import (
+    mysql_host,
+    mysql_password,
+    mysql_user,
+    zt411_host,
+    zt411_port,
+    zt421_dpi,
+)
 
 
 class generalized_barcode_generation:
@@ -17,16 +28,7 @@ class generalized_barcode_generation:
         self.label_y = int(label_y)
         self.dpi = int(dpi)
         self.zitems = {}
-
-    def excel_based(self, filename="Print_File.xlsb"):
-        try:
-            item_list = util.loop_xlsb_file(path.abspath(path.join(pardir(), "input", filename)), columns=1)
-            if item_list is list:
-                item_list = [item_list]
-            self.zitems = self.item_check(item_list)
-        except Exception as E:
-            print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
-        return item_list
+        self.qr = ""
 
     def entered(self, value=None, check_override=False, **kwargs):
         try:
@@ -44,14 +46,21 @@ class generalized_barcode_generation:
                     )
                 ]
             else:
-                item_list = [value]
+                if value is list:
+                    item_list = value
+                else:
+                    item_list = [value]
             if not check_override:
                 self.zitems = self.item_check(item_list)
             else:
                 self.zitems = self.no_check(item_list)
+            self.zitems_zebra()
         except Exception as E:
             print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
         return item_list
+
+    def _dpi(self, **kwargs):
+        return int(kwargs.get("dpi", self.dpi))
 
     def no_check(self, item_list):
         d = {}
@@ -62,10 +71,10 @@ class generalized_barcode_generation:
     def item_check(self, item_list):
         d = {}
         try:
-            sparc = util.MySQL(
-                getenv("mysql_user", private.mysql_user),
-                getenv("mysql_password", private.mysql_password),
-                getenv("mysql_host", private.mysql_host),
+            sparc = MySQL(
+                getenv("mysql_user", mysql_user),
+                getenv("mysql_password", mysql_password),
+                getenv("mysql_host", mysql_host),
                 database=getenv("mysql_database", "sparc"),
             )
 
@@ -87,34 +96,29 @@ class generalized_barcode_generation:
             print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
         return d
 
-    def manual_items(self, item_list):
-        d = {}
-        try:
-            for item in item_list:
-                d[item] = {"workorder": "", "barcode": ""}
-        except Exception as E:
-            print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
-        return d
-
-    def zebra_text(self, **kwargs):
+    def cell_zebra_text(self, **kwargs):
         """Zebra printer configuration
             **kwargs: qr_loc, cell_loc, barcode_loc, workorder_loc, cell_text_size, barcode_text_size, workorder_text_size
         Returns:
             _type_: _description_
         """
-        dpi = kwargs.get("dpi", self.dpi)
-        qr_loc = str(kwargs.get("qr_loc", str(round(0.250 * dpi, 0)) + "," + str(round(0.200 * dpi, 0))))
-        cell_loc = str(kwargs.get("cell_loc", str(round(0.800 * dpi, 0)) + "," + str(round(0.246 * dpi, 0))))
-        barcode_loc = str(kwargs.get("barcode_loc", str(round(0.800 * dpi, 0)) + "," + str(round(0.575 * dpi, 0))))
-        workorder_loc = str(kwargs.get("workorder_loc", str(round(0.665 * dpi, 0)) + "," + str(round(0.739 * dpi, 0))))
+        self.dpi = self._dpi(kwargs.get("dpi", self.dpi))
+        qr_loc = str(kwargs.get("qr_loc", str(round(0.250 * self.dpi, 0)) + "," + str(round(0.200 * self.dpi, 0))))
+        cell_loc = str(kwargs.get("cell_loc", str(round(0.800 * self.dpi, 0)) + "," + str(round(0.246 * self.dpi, 0))))
+        barcode_loc = str(
+            kwargs.get("barcode_loc", str(round(0.800 * self.dpi, 0)) + "," + str(round(0.575 * self.dpi, 0)))
+        )
+        workorder_loc = str(
+            kwargs.get("workorder_loc", str(round(0.665 * self.dpi, 0)) + "," + str(round(0.739 * self.dpi, 0)))
+        )
         cell_text_size = str(
-            kwargs.get("cell_text_size", str(round(0.200 * dpi, 0)) + "," + str(round(0.180 * dpi, 0)))
+            kwargs.get("cell_text_size", str(round(0.200 * self.dpi, 0)) + "," + str(round(0.180 * self.dpi, 0)))
         )
         barcode_text_size = str(
-            kwargs.get("barcode_text_size", str(round(0.100 * dpi, 0)) + "," + str(round(0.100 * dpi, 0)))
+            kwargs.get("barcode_text_size", str(round(0.100 * self.dpi, 0)) + "," + str(round(0.100 * self.dpi, 0)))
         )
         workorder_text_size = str(
-            kwargs.get("workorder_text_size", str(round(0.200 * dpi, 0)) + "," + str(round(0.180 * dpi, 0)))
+            kwargs.get("workorder_text_size", str(round(0.200 * self.dpi, 0)) + "," + str(round(0.180 * self.dpi, 0)))
         )
         self.qr = f"""^XA
             ^FO{qr_loc},0^BQN,2,4,Q,7^FDQA,{kwargs.get("cell", "")}^FS
@@ -124,14 +128,10 @@ class generalized_barcode_generation:
             ^XZ"""
         return self.qr
 
-    def send(self, **kwargs):
-        z = util.zebra("", **kwargs)
-        if "qr" in kwargs:
-            z.qr = kwargs.get("qr", "")
-            z.send(host=kwargs.get("host", private.zt411_host), port=kwargs.get("port", private.zt411_port), **kwargs)
-        else:
+    def zitems_zebra(self, **kwargs):
+        try:
             for key, item in self.zitems.items():
-                z.qr = self.zebra_text(
+                qr = self.cell_zebra_text(
                     cell=key,
                     barcode=item.get("barcode", ""),
                     workorder=item.get("workorder", ""),
@@ -139,32 +139,222 @@ class generalized_barcode_generation:
                     label_y=self.label_y,
                     **kwargs,
                 )
-                z.send(
-                    host=kwargs.get("host", private.zt411_host), port=kwargs.get("port", private.zt411_port), **kwargs
-                )
+                self.zitems[key]["qr"] = qr
+        except Exception as E:
+            print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
+
+    def productionboxlabel(self, cell_id):
+        sparc = MySQL(
+            getenv("mysql_user", mysql_user),
+            getenv("mysql_password", mysql_password),
+            getenv("mysql_host", mysql_host),
+            database=getenv("mysql_database", "sparc"),
+        )
+        try:
+            cell_no_pn = cell_id.split(":", 1)[1]
+            cell_list = sparc.select(
+                rf"""select workorder, 'N/A' as batch, p.partnumber, location
+                from sparc.thing t
+                inner join sparc.part p on p.id = t.partid
+                where t.thingname like '%%{cell_no_pn}'
+                Group by workorder, p.partnumber, location
+                UNION
+                select i.lot as workorder, coalesce(r.batch,'N/A') as batch, i.cellformat as partnumber, i.location
+                from sparc.incomingcell i
+                left join sparc.receiving r on r.po = i.po and r.lp = i.lp
+                where i.barcode like '%%{cell_id}'
+                group by i.lot, i.cellformat, i.location, r.batch"""
+            ).values.tolist()
+            for row in cell_list:
+                lot = row[0]
+                batch = row[1]
+                cellformat = row[2]
+                celllocation = row[3]
+                self.label_y = 2
+                self.label_x = 3
+                self.dpi = getenv("zt421_dpi", zt421_dpi)
+                self.zitems[cell_id] = {"qr": self._productionbox_zebra_text(lot, batch, cellformat, celllocation)}
+        except Exception as E:
+            print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
+
+    def _productionbox_zebra_text(self, lot, batch, cellformat, celllocation, **kwargs):
+        try:
+            self.dpi = self._dpi()
+            text_size = str(
+                kwargs.get("text_size", f"{str(round(self.dpi * 0.3, 0))},{str(round(self.dpi * 0.256, 0))}")
+            )
+            self.qr = f"""^XA
+                    ^CF0,{text_size}^FO20,{str(0.1 * self.dpi)},0^FDLot:^FS
+                    ^CF0,{text_size}^FO20,{str(0.6 * self.dpi)},0^FDBatch:^FS
+                    ^CF0,{text_size}^FO20,{str(1.1 * self.dpi)},0^FDFormat:^FS
+                    ^CF0,{text_size}^FO20,{str(1.6 * self.dpi)},0^FDLocation:^FS
+                    ^GB{str(self.label_x * self.dpi)},0,1,B,1^FO0,{str(0.5 * self.dpi)},0^FS
+                    ^GB{str(self.label_x * self.dpi)},0,1,B,1^FO0,{str(1 * self.dpi)},0^FS
+                    ^GB{str(self.label_x * self.dpi)},0,1,B,1^FO0,{str(1.5 * self.dpi)},0^FS
+                    ^CF0,{text_size}^FO{str(0.9*self.label_x * self.dpi)},{str(0.1 * self.dpi)},1^FD{lot}^FS
+                    ^CF0,{text_size}^FO{str(0.9*self.label_x * self.dpi)},{str(0.6 * self.dpi)},1^FD{batch}^FS
+                    ^CF0,{text_size}^FO{str(0.9*self.label_x * self.dpi)},{str(1.1 * self.dpi)},1^FD{cellformat}^FS
+                    ^CF0,{text_size}^FO{str(0.9*self.label_x * self.dpi)},{str(1.6 * self.dpi)},1^FD{celllocation}^FS
+                    ^XZ"""
+        except Exception as E:
+            print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
+        return self.qr
+
+    def processboxlabel(self, cell_id, qty):
+        sparc = MySQL(
+            getenv("mysql_user", mysql_user),
+            getenv("mysql_password", mysql_password),
+            getenv("mysql_host", mysql_host),
+            database=getenv("mysql_database", "sparc"),
+        )
+        try:
+            cell_list = sparc.select(
+                rf"""select workorder, 'N/A' as batch, p.partnumber, location
+                    from sparc.thing t
+                    inner join sparc.part p on p.id = t.partid
+                    where CONCAT(p.partnumber,':',t.thingname) like '{cell_id}'
+                    or t.thingname like '{cell_id}'
+                    group by workorder, p.partnumber, location"""
+            ).values.tolist()
+
+            for row in cell_list:
+                lot = row[0]
+                batch = row[1]
+                cellformat = row[2]
+                celllocation = row[3]
+                self.label_y = 2
+                self.label_x = 3
+                self.dpi = getenv("zt421_dpi", zt421_dpi)
+                self.zitems[cell_id] = {"qr": self._productionbox_zebra_text(lot, batch, cellformat, celllocation, qty)}
+        except Exception as E:
+            print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
+
+    def _processbox_zebra_text(self, lot, batch, cellformat, celllocation, qty, **kwargs):
+        self.dpi = self._dpi()
+        try:
+            text_size = str(kwargs.get("text_size", f"{str(round(self.dpi * 0.3, 0))},{str(round(self.dpi * 0.3, 0))}"))
+            self.qr = f"""^XA
+                    ^CF0,{text_size}^FO20,{str(0.1 * self.dpi)},0^FDLot:^FS
+                    ^CF0,{text_size}^FO20,{str(0.5 * self.dpi)},0^FDNote:^FS
+                    ^CF0,{text_size}^FO20,{str(0.9 * self.dpi)},0^FDFormat:^FS
+                    ^CF0,{text_size}^FO20,{str(1.3 * self.dpi)},0^FDLocation:^FS
+                    ^CF0,{text_size}^FO20,{str(1.7 * self.dpi)},0^FDQty:^FS
+                    ^GB{str(1.8 * self.label_x * self.dpi)},0,1,B,1^FO0,{str(0.4 * self.dpi)},0^FS
+                    ^GB{str(1.8 * self.label_x * self.dpi)},0,1,B,1^FO0,{str(0.8 * self.dpi)},0^FS
+                    ^GB{str(1.8 * self.label_x * self.dpi)},0,1,B,1^FO0,{str(1.2 * self.dpi)},0^FS
+                    ^GB{str(1.8 * self.label_x * self.dpi)},0,1,B,1^FO0,{str(1.6 * self.dpi)},0^FS
+                    ^CF0,{text_size}^FO{str(0.9*self.label_x * self.dpi)},{str(0.1 * self.dpi)},1^FD{str(lot)}^FS
+                    ^CF0,{text_size}^FO{str(0.9*self.label_x * self.dpi)},{str(0.5 * self.dpi)},1^FD{str(batch)}^FS
+                    ^CF0,{text_size}^FO{str(0.9*self.label_x * self.dpi)},{str(0.9 * self.dpi)},1^FD{str(cellformat)}^FS
+                    ^CF0,{text_size}^FO{str(0.9*self.label_x * self.dpi)},{str(1.3 * self.dpi)},1^FD{str(celllocation)}^FS
+                    ^CF0,{text_size}^FO{str(0.9*self.label_x * self.dpi)},{str(1.7 * self.dpi)},1^FD{qty}^FS
+                    ^XZ"""
+        except Exception as E:
+            print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
+        return self.qr
+
+    def send(self, **kwargs):
+        try:
+            z = zebra(**kwargs)
+            if "qr" in kwargs:
+                z.qr = kwargs.get("qr")
+                z.send(**kwargs)
+            else:
+                for key, item in self.zitems.items():
+                    z.qr = item["qr"]
+                    print("send, key/item/qr", key, item, z.qr)
+                    z.send(**kwargs)
+        except Exception as E:
+            print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
 
     def reset(self):
         self.zitems = {}
         self.item_list = []
 
 
-def manual():
-    gbg = generalized_barcode_generation()
-    while True:
-        gbg.manual()
-        gbg.send()
-        gbg.reset()
+class MySQL:
+    def __init__(
+        self,
+        user,
+        password,
+        host,
+        **kwargs,
+    ):
+        self.database = kwargs.get("database", "sparc")
+
+        try:
+            self.engine = create_engine(f"mysql+pymysql://{user}:{password}@{host}/{self.database}")
+        except Exception as E:
+            print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
+
+    def select(self, query_text):
+        """Get info from MySQL with select statement
+
+        Args:
+            query_text (string): Query to run
+
+        Returns:
+            Dataframe: Query results
+        """
+        try:
+            df = read_sql_query(text(query_text), con=self.engine)
+        except Exception as E:
+            print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
+            df = None
+        return df
 
 
-def excel():
-    gbg = generalized_barcode_generation()
-    gbg.excel_based()
-    gbg.send()
+class zebra:
+    def __init__(self, **kwargs):
+        self.qr = kwargs.get("qr", "")
+        self.name = kwargs.get("printer_name", "")
+        self.conn_type = kwargs.get("conn_type", "ip")
+
+    def _check_host_port(self, host, port):
+        if host == "":
+            host = getenv("ops_host", zt411_host)
+        if port == "":
+            port = int(getenv("ops_port", zt411_port))
+        return host, port
+
+    def create_ip_conn(self, **kwargs):
+        try:
+            sock = socket(AF_INET, SOCK_STREAM)
+            host, port = self._check_host_port(kwargs.get("host", ""), kwargs.get("port", ""))
+            sock.connect((host, int(port)))
+        except Exception as E:
+            print(type(E).__name__, __file__, E.__traceback__.tb_lineno, "\n", E)
+        return sock
+
+    def create_blue_conn(self, **kwargs):
+        try:
+            sock = socket(AF_INET, SOCK_STREAM)
+            host, port = self._check_host_port(kwargs.get("host", ""), kwargs.get("port", ""))
+            sock.connect((host, int(port)))
+        except Exception as E:
+            print(type(E).__name__, __file__, E.__traceback__.tb_lineno, "\n", E)
+        return sock
+
+    def send(self, **kwargs):
+        try:
+            if self.conn_type == "name":
+                z = Zebra()
+                z.setqueue(self.name)
+                z.output(self.qr)
+                return None
+            elif self.conn_type == "ip":
+                self.sock = self.create_ip_conn(host=kwargs.get("host", ""), port=kwargs.get("port", ""))
+            elif self.conn_type == "bluetooth":
+                self.sock = self.create_blue_conn(host=kwargs.get("host", ""), port=kwargs.get("port", ""))
+            self.sock.send(bytes(self.qr, "utf-8"))  # using bytes
+            self.sock.close()
+        except Exception as E:
+            print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
 
 
 def main():
     try:
-        globals()[argv[1]]()
+        print("generalized_cell.py")
     except Exception as E:
         print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
         input("Press Enter to close")

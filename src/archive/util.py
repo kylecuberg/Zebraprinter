@@ -6,7 +6,7 @@ from socket import AF_INET, SOCK_STREAM, socket
 # Third-party
 from pandas import read_sql_query
 from pyxlsb import open_workbook
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from zebra import Zebra
 
 # First-party/Local
@@ -14,8 +14,8 @@ import private
 
 
 class zebra:
-    def __init__(self, qr, **kwargs):
-        self.qr = qr
+    def __init__(self, **kwargs):
+        self.qr = kwargs.get("qr", "")
         self.name = kwargs.get("printer_name", "")
         self.conn_type = kwargs.get("conn_type", "ip")
 
@@ -108,7 +108,7 @@ class MySQL:
             Dataframe: Query results
         """
         try:
-            df = read_sql_query(query_text, con=self.engine)
+            df = read_sql_query(text(query_text), con=self.engine)
         except Exception as E:
             print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
             df = None

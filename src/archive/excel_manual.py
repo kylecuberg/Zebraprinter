@@ -1,9 +1,11 @@
 # Standard library
 import os
 
+# Third-party
+import util
+
 # First-party/Local
 import private
-import util
 
 # # # DEPRECIATED # # #
 

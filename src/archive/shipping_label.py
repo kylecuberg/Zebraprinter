@@ -1,4 +1,4 @@
-# First-party/Local
+# Third-party
 import util
 
 

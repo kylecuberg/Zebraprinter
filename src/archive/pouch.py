@@ -1,7 +1,7 @@
 # Standard library
 from datetime import date
 
-# First-party/Local
+# Third-party
 import util
 
 

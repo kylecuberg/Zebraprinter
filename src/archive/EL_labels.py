@@ -1,9 +1,11 @@
 # Standard library
 from os import getenv
 
+# Third-party
+import util
+
 # First-party/Local
 import private
-import util
 
 if __name__ == "__main__":
     """[summary]"""
