@@ -1,5 +1,8 @@
 # Changelog
 
+2023_12_05
+    Combine to a GUI format, removed old ways of pulling.
+
 2023_11_27
     updated to "%~dp0..\env\Scripts\python.exe" to find the local python installation, based on the GITHUB guide
     ProcessBoxLabels now searches for non-PN leading items as well
