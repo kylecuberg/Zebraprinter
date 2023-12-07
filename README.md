@@ -31,45 +31,21 @@ This project is intended to meet the requirements of PEP-518 and PEP-621, removi
 Python 3.10+ is the currently supported version.
 If you wish to change this, you may use any version >3.7, but if you plan to edit, the version of python must be updated in the pyproject.toml in the "target_version" under tool.black
 
-This project also requires a virtual environment, installed in the "env" folder, and will utilize the python.exe within that & the modules installed at that location. See the common commands in docs/Resources.md for instructions.
-
 ## Installation - Windows
 
-1. Make sure computer has Python installed (Version must be >= 3.7, 3.10 is preferred) & you know the location of the python executable file.
-2. Download & extract files from Github
-3. Move whole folder to desired location
-4. Must run this line from command line for new users:
-   py -m pip install {file_location where zip was extracted to}
-      This may require CMD, rather than powershell
-5. You will need to get the private.py file from @kylecuberg to get the connection info!
-
-These steps are depreciated:
-
-1. In the excel file, right click the button.
-2. Click "assign macro", then "edit"
-3. In the macro, set the PythonExe variable to your computers file location of python.exe (found in step 1)
-   - For easiest scenario, python will be installed for all users.
-4. In the macro, set the BatExe to the location of the "Print excel.bat" file
-5. For manual, follow 8 but set the PythonScriptExe to the location of the "{}\src\manual.py" file (beginning part should match the file location)
-
-Enter the serials in the first column, and hit the macro button to print those serials.
-The "manual" macro in the excel file is the only script that does not reference SPARC. Instead, it simply takes the given serials and barcodes & outputs the labels.
-NOTE: Each time the excel macro gets run, the file will autosave before the script executes.
+Project has been updated to utilize an executable gui.
+Installation is the download of the executable.
 
 ## Installation - Mac
 
-1. Make sure computer has Python installed (Version must be >= 3.7, 3.10 is preferred)& you know the location of the python executable file.
-2. Download & extract files from Github
-3. Move whole folder to desired location
-4. [TBD]
+Executable does not work for mac, and there is no support for Mac yet planned.
 
 ## Use
 
-Most scripts within this project will take an input, query against SPARC for the rest of the appropriate information (as well as verify the information provided was contained within SPARC), and send a string of characters to the appropriate printer for the label type/size associated.
+Download the .exe file and run
+Executable is under dist/all_label_gui.exe
 
-For most items, there will be an associated .bat file. This is a command line prompt that runs the python script for you.
-
-NOTE: These execution methods have only been validated on Windows.
+![image](docs/Program Images/Main Screen.png)
 
 ## ToDo
 
