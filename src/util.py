@@ -182,6 +182,8 @@ class generalized_barcode_generation:
                 where i.barcode like '%%{cell_id}'
                 group by i.lot, i.cellformat, i.location, r.batch"""
             ).values.tolist()
+            if len(cell_list) == 0:
+                print("nothing found")
             for row in cell_list:
                 lot = row[0]
                 batch = row[1]

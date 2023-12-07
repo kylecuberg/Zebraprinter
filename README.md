@@ -79,3 +79,4 @@ NOTE: These execution methods have only been validated on Windows.
 - [x] Separate dryroom & cage printing
 - [ ] Clearer labels for functions
 - [ ] Simplify the way to get the item check (SQL query)?
+- [x] Removed large file check, allow application to be easily downloaded

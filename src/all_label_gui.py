@@ -1,4 +1,5 @@
 # Third-party
+import pkg_resources
 from PySimpleGUI import WIN_CLOSED, Button, InputText, Text, Window
 from PySimpleGUI import theme as sgtheme
 
@@ -15,6 +16,7 @@ class combined_gui:
             [
                 [Text("Select the type of printing you wish to do")],
                 [Button("Production boxes"), Button("Process boxes"), Button("Cage"), Button("Dryroom"), Button("EL")],
+                [Text("Version " + str(__version__))],
             ],
         )
         while True:
@@ -196,4 +198,5 @@ def main():
 
 
 if __name__ == "__main__":
+    __version__ = pkg_resources.get_distribution("ZebraPrinter").version
     main()
