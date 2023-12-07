@@ -78,4 +78,4 @@ NOTE: These execution methods have only been validated on Windows.
 - [x] Simpler installation guide? Add python installation descriptions & figure out how to do it not using VSCode
 - [x] Separate dryroom & cage printing
 - [ ] Clearer labels for functions
-  
+- [ ] Simplify the way to get the item check (SQL query)?
