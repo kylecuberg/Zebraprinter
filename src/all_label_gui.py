@@ -1,18 +1,10 @@
 # Third-party
-
-# Third-party
 from PySimpleGUI import WIN_CLOSED, Button, InputText, Text, Window
 from PySimpleGUI import theme as sgtheme
 
 # First-party/Local
-from generalized_cell import generalized_barcode_generation
 from private import zt421_dpi, zt421_host, zt421_port
-
-# Validations
-# Production Boxes -> Works for 751015:SLV2231205001
-# Process Boxes -> None
-# Cell -> Only checked cage print
-# EL -> All 4 buttons checked
+from util import generalized_barcode_generation
 
 
 class combined_gui:
@@ -22,7 +14,7 @@ class combined_gui:
             "Label Printing",
             [
                 [Text("Select the type of printing you wish to do")],
-                [Button("Production boxes"), Button("Process boxes"), Button("Cell"), Button("EL")],
+                [Button("Production boxes"), Button("Process boxes"), Button("Cage"), Button("Dryroom"), Button("EL")],
             ],
         )
         while True:
@@ -33,19 +25,20 @@ class combined_gui:
                 self._production_boxes()
             elif event == "Process boxes":
                 self._process_boxes()
-            elif event == "Cell":
-                self._cell()
+            elif event == "Cage":
+                self._cage()
+            elif event == "Dryroom":
+                self._dryroom()
             elif event == "EL":
                 self._el()
         self.main_window.close()
 
-    def _cell(self):
+    def _cage(self):
         self._cell_window = Window(
             "Cell Layout",
             [
-                [Text("Enter text to print")],
-                [Text("Text", size=(20, 2)), InputText(do_not_clear=False)],
-                [Button("Dryroom Print"), Button("Cage Print")],
+                [Text("Cell/Barcode/WO", size=(20, 2)), InputText(do_not_clear=False)],
+                [Button("Print")],
             ],
         )
         gbg = generalized_barcode_generation()
@@ -55,15 +48,38 @@ class combined_gui:
                 print(event, values)
                 if event == "Exit" or event == WIN_CLOSED:
                     break
-                elif event == "Dryroom Print":
-                    gbg.entered(check_override=True, value=values[0])
-                    gbg.send(printer_name="ZDesigner ZT411R-203dpi ZPL", conn_type="name")
-                elif event == "Cage Print":
+                elif event == "Print":
                     gbg.entered(value=values[0])
                     gbg.send()
+                    gbg.reset()
             except Exception as E:
                 print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
-                break
+                # break
+        self._cell_window.close()
+        self._cell_window = None
+
+    def _dryroom(self):
+        self._cell_window = Window(
+            "Dryroom Layout",
+            [
+                [Text("Enter text to print", size=(20, 2)), InputText(do_not_clear=False)],
+                [Button("Print")],
+            ],
+        )
+        gbg = generalized_barcode_generation()
+        while True:
+            try:
+                event, values = self._cell_window.read()
+                print(event, values)
+                if event == "Exit" or event == WIN_CLOSED:
+                    break
+                elif event == "Print":
+                    gbg.entered(check_override=True, value=values[0])
+                    gbg.send(printer_name="ZDesigner ZT411R-203dpi ZPL", conn_type="name")
+                    gbg.reset()
+            except Exception as E:
+                print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
+                # break
         self._cell_window.close()
         self._cell_window = None
 
@@ -146,25 +162,25 @@ class combined_gui:
                     break
                 elif event == "Set 1":
                     qr = r"""^XA
-                    ^CF0,25,25^FO10,20,0^FDSolvent 1^FS
-                    ^CF0,25,25^FO10,75,0^FDSolvent 2^FS
-                    ^CF0,25,25^FO10,135,0^FDSolvent 4^FS
+                    ^CF0,25,25^FO25,20,0^FDSolvent 1^FS
+                    ^CF0,25,25^FO25,75,0^FDSolvent 2^FS
+                    ^CF0,25,25^FO25,135,0^FDSolvent 4^FS
                     ^XZ"""
                 elif event == "Set 2":
                     qr = r"""^XA
-                    ^CF0,25,25^FO10,20,0^FDSolvent 7^FS
-                    ^CF0,25,25^FO10,75,0^FDDiluent 2^FS
-                    ^CF0,25,25^FO10,135,0^FDSalt 1^FS
+                    ^CF0,25,25^FO25,20,0^FDSolvent 7^FS
+                    ^CF0,25,25^FO25,75,0^FDDiluent 2^FS
+                    ^CF0,25,25^FO25,135,0^FDSalt 1^FS
                     ^XZ"""
                 elif event == "Set 3":
                     qr = r"""^XA
-                    ^CF0,25,25^FO10,20,0^FDSalt 4^FS
-                    ^CF0,25,25^FO10,75,0^FDMixer EL^FS
-                    ^CF0,25,25^FO10,135,0^FDVessel EL^FS
+                    ^CF0,25,25^FO25,20,0^FDSalt 4^FS
+                    ^CF0,25,25^FO25,75,0^FDMixer EL^FS
+                    ^CF0,25,25^FO25,135,0^FDVessel EL^FS
                     ^XZ"""
                 else:
                     qr = f"""^XA
-                    ^CF0,25,25^FO10,75,0^FD{values[0]}^FS
+                    ^CF0,25,25^FO25,75,0^FD{values[0]}^FS
                     ^XZ"""
                 gbg.send(qr=qr)
                 gbg.reset()

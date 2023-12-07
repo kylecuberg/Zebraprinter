@@ -73,11 +73,9 @@ NOTE: These execution methods have only been validated on Windows.
 
 ## ToDo
 
-- [x] Update qrtext.sn to be mirror processboxlabel generalization
-- [x] Update qrtext.boxlabel to be mirror processboxlabel generalization
-- [x] Update wo.py to use qrtext class
-- [ ] Add pouch to qrtext class
-- [ ] Update pouch.py to use qrtext class
 - [x] V1/V2 cells stored differently, need alt query
 - [x] Add EL label printing
-- [ ] Simpler installation guide? Add python installation descriptions & figure out how to do it not using VSCode
+- [x] Simpler installation guide? Add python installation descriptions & figure out how to do it not using VSCode
+- [x] Separate dryroom & cage printing
+- [ ] Clearer labels for functions
+  

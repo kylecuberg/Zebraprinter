@@ -54,7 +54,7 @@ class generalized_barcode_generation:
                 self.zitems = self.item_check(item_list)
             else:
                 self.zitems = self.no_check(item_list)
-            self.zitems_zebra()
+            self.celllabel()
         except Exception as E:
             print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
         return item_list
@@ -80,14 +80,21 @@ class generalized_barcode_generation:
 
             for item in item_list:
                 cell_info_list = sparc.select(
-                    rf"""select t.thingname, t.workorder, CASE WHEN g.thingname like 'CHG%%' THEN '' ELSE g.thingname END AS raw
+                    rf"""select
+                    CASE WHEN t.thingname like 'CHG%%' THEN NULL ELSE t.thingname END AS cell_id,
+                    t.workorder,
+                    CASE WHEN g.thingname like 'CHG%%' THEN ''
+                    WHEN t.workorder like 'WO%%' THEN ''
+                    ELSE g.thingname END AS raw
                     from sparc.thing t
                     inner join sparc.genealogy g on g.parentthingname = t.thingname
                     where t.thingname like '{item}' or g.thingname like '{item}' or t.workorder like '{item}'
-                    group by t.thingname, t.workorder, raw
-                    order by t.thingname desc"""
+                    group by cell_id, t.workorder, raw
+                    order by cell_id desc, raw asc
+                    """
                 ).values.tolist()
-
+                if len(cell_info_list) == 0:
+                    print(f"nothing was found with the name {item}")
                 for cell_info in cell_info_list:
                     if cell_info[2] != "":
                         cell_info[2] = "Raw-" + cell_info[2]
@@ -96,42 +103,10 @@ class generalized_barcode_generation:
             print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
         return d
 
-    def cell_zebra_text(self, **kwargs):
-        """Zebra printer configuration
-            **kwargs: qr_loc, cell_loc, barcode_loc, workorder_loc, cell_text_size, barcode_text_size, workorder_text_size
-        Returns:
-            _type_: _description_
-        """
-        self.dpi = self._dpi(kwargs.get("dpi", self.dpi))
-        qr_loc = str(kwargs.get("qr_loc", str(round(0.250 * self.dpi, 0)) + "," + str(round(0.200 * self.dpi, 0))))
-        cell_loc = str(kwargs.get("cell_loc", str(round(0.800 * self.dpi, 0)) + "," + str(round(0.246 * self.dpi, 0))))
-        barcode_loc = str(
-            kwargs.get("barcode_loc", str(round(0.800 * self.dpi, 0)) + "," + str(round(0.575 * self.dpi, 0)))
-        )
-        workorder_loc = str(
-            kwargs.get("workorder_loc", str(round(0.665 * self.dpi, 0)) + "," + str(round(0.739 * self.dpi, 0)))
-        )
-        cell_text_size = str(
-            kwargs.get("cell_text_size", str(round(0.200 * self.dpi, 0)) + "," + str(round(0.180 * self.dpi, 0)))
-        )
-        barcode_text_size = str(
-            kwargs.get("barcode_text_size", str(round(0.100 * self.dpi, 0)) + "," + str(round(0.100 * self.dpi, 0)))
-        )
-        workorder_text_size = str(
-            kwargs.get("workorder_text_size", str(round(0.200 * self.dpi, 0)) + "," + str(round(0.180 * self.dpi, 0)))
-        )
-        self.qr = f"""^XA
-            ^FO{qr_loc},0^BQN,2,4,Q,7^FDQA,{kwargs.get("cell", "")}^FS
-            ^CF0,{cell_text_size}^FO{cell_loc},0^FB250,8,0,L,0^FD{kwargs.get("cell", "")}^FS
-            ^CF0,{barcode_text_size}^FO{barcode_loc},0^FD{kwargs.get("barcode", "")}^FS
-            ^CF0,{workorder_text_size}^FO{workorder_loc},0^FD{kwargs.get("workorder", "")}^FS
-            ^XZ"""
-        return self.qr
-
-    def zitems_zebra(self, **kwargs):
+    def celllabel(self, **kwargs):
         try:
             for key, item in self.zitems.items():
-                qr = self.cell_zebra_text(
+                qr = self._cell_zebra_text(
                     cell=key,
                     barcode=item.get("barcode", ""),
                     workorder=item.get("workorder", ""),
@@ -142,6 +117,48 @@ class generalized_barcode_generation:
                 self.zitems[key]["qr"] = qr
         except Exception as E:
             print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
+
+    def _cell_zebra_text(self, **kwargs):
+        """Zebra printer configuration
+            **kwargs: qr_loc, cell_loc, barcode_loc, workorder_loc, cell_text_size, barcode_text_size, workorder_text_size
+        Returns:
+            _type_: _description_
+        """
+        try:
+            if "dpi" in kwargs:
+                self.dpi = self._dpi(dpi=kwargs.get("dpi", self.dpi))
+            else:
+                self.dpi = self._dpi()
+            qr_loc = str(kwargs.get("qr_loc", str(round(0.250 * self.dpi, 0)) + "," + str(round(0.200 * self.dpi, 0))))
+            cell_loc = str(
+                kwargs.get("cell_loc", str(round(0.800 * self.dpi, 0)) + "," + str(round(0.246 * self.dpi, 0)))
+            )
+            barcode_loc = str(
+                kwargs.get("barcode_loc", str(round(0.800 * self.dpi, 0)) + "," + str(round(0.575 * self.dpi, 0)))
+            )
+            workorder_loc = str(
+                kwargs.get("workorder_loc", str(round(0.665 * self.dpi, 0)) + "," + str(round(0.739 * self.dpi, 0)))
+            )
+            cell_text_size = str(
+                kwargs.get("cell_text_size", str(round(0.200 * self.dpi, 0)) + "," + str(round(0.180 * self.dpi, 0)))
+            )
+            barcode_text_size = str(
+                kwargs.get("barcode_text_size", str(round(0.100 * self.dpi, 0)) + "," + str(round(0.100 * self.dpi, 0)))
+            )
+            workorder_text_size = str(
+                kwargs.get(
+                    "workorder_text_size", str(round(0.200 * self.dpi, 0)) + "," + str(round(0.180 * self.dpi, 0))
+                )
+            )
+            self.qr = f"""^XA
+                ^FO{qr_loc},0^BQN,2,4,Q,7^FDQA,{kwargs.get("cell", "")}^FS
+                ^CF0,{cell_text_size}^FO{cell_loc},0^FB250,8,0,L,0^FD{kwargs.get("cell", "")}^FS
+                ^CF0,{barcode_text_size}^FO{barcode_loc},0^FD{kwargs.get("barcode", "")}^FS
+                ^CF0,{workorder_text_size}^FO{workorder_loc},0^FD{kwargs.get("workorder", "")}^FS
+                ^XZ"""
+        except Exception as E:
+            print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
+        return self.qr
 
     def productionboxlabel(self, cell_id):
         sparc = MySQL(
@@ -179,7 +196,10 @@ class generalized_barcode_generation:
 
     def _productionbox_zebra_text(self, lot, batch, cellformat, celllocation, **kwargs):
         try:
-            self.dpi = self._dpi()
+            if "dpi" in kwargs:
+                self.dpi = self._dpi(dpi=kwargs.get("dpi", self.dpi))
+            else:
+                self.dpi = self._dpi()
             text_size = str(
                 kwargs.get("text_size", f"{str(round(self.dpi * 0.3, 0))},{str(round(self.dpi * 0.256, 0))}")
             )
@@ -225,13 +245,16 @@ class generalized_barcode_generation:
                 self.label_y = 2
                 self.label_x = 3
                 self.dpi = getenv("zt421_dpi", zt421_dpi)
-                self.zitems[cell_id] = {"qr": self._productionbox_zebra_text(lot, batch, cellformat, celllocation, qty)}
+                self.zitems[cell_id] = {"qr": self._processbox_zebra_text(lot, batch, cellformat, celllocation, qty)}
         except Exception as E:
             print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
 
     def _processbox_zebra_text(self, lot, batch, cellformat, celllocation, qty, **kwargs):
-        self.dpi = self._dpi()
         try:
+            if "dpi" in kwargs:
+                self.dpi = self._dpi(dpi=kwargs.get("dpi", self.dpi))
+            else:
+                self.dpi = self._dpi()
             text_size = str(kwargs.get("text_size", f"{str(round(self.dpi * 0.3, 0))},{str(round(self.dpi * 0.3, 0))}"))
             self.qr = f"""^XA
                     ^CF0,{text_size}^FO20,{str(0.1 * self.dpi)},0^FDLot:^FS
@@ -262,7 +285,6 @@ class generalized_barcode_generation:
             else:
                 for key, item in self.zitems.items():
                     z.qr = item["qr"]
-                    print("send, key/item/qr", key, item, z.qr)
                     z.send(**kwargs)
         except Exception as E:
             print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
