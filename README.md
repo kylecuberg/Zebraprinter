@@ -45,8 +45,6 @@ Executable does not work for mac, and there is no support for Mac yet planned.
 Download the .exe file and run
 Executable is under dist/all_label_gui.exe
 
-![image](docs/Program Images/Main Screen.png)
-
 ## ToDo
 
 - [x] V1/V2 cells stored differently, need alt query
@@ -56,3 +54,5 @@ Executable is under dist/all_label_gui.exe
 - [ ] Clearer labels for functions
 - [ ] Simplify the way to get the item check (SQL query)?
 - [x] Removed large file check, allow application to be easily downloaded
+- [x] Custom label printing option
+  - [x] Merged custom label printing & dryroom printing functions
