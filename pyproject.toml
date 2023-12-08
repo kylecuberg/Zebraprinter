@@ -4,7 +4,7 @@ build-backend = 'setuptools.build_meta'
 
 [project]
 name = 'zebraPrinter'
-version = '2023.12.07.2'
+version = '2023.12.08.1'
 description = 'Intentionally left blank'
 requires-python = '>=3.7'
 license = {file = "LICENSE.txt"}

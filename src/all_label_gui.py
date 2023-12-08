@@ -1,6 +1,6 @@
 # Third-party
 import pkg_resources
-from PySimpleGUI import WIN_CLOSED, Button, InputText, Text, Window
+from PySimpleGUI import WIN_CLOSED, Button, InputText, Multiline, Text, Window
 from PySimpleGUI import theme as sgtheme
 
 # First-party/Local
@@ -15,7 +15,14 @@ class combined_gui:
             "Label Printing",
             [
                 [Text("Select the type of printing you wish to do")],
-                [Button("Production boxes"), Button("Process boxes"), Button("Cage"), Button("Dryroom"), Button("EL")],
+                [
+                    Button("Production boxes"),
+                    Button("Process boxes"),
+                    Button("Cage"),
+                    Button("Dryroom"),
+                    Button("EL"),
+                    Button("Custom"),
+                ],
                 [Text("Version " + str(__version__))],
             ],
         )
@@ -30,17 +37,19 @@ class combined_gui:
             elif event == "Cage":
                 self._cage()
             elif event == "Dryroom":
-                self._dryroom()
+                self._custom(printer_name="ZDesigner ZT411R-203dpi ZPL", conn_type="name")
             elif event == "EL":
                 self._el()
+            elif event == "Custom":
+                self._custom()
         self.main_window.close()
 
     def _cage(self):
         self._cell_window = Window(
             "Cell Layout",
             [
-                [Text("Cell/Barcode/WO", size=(20, 2)), InputText(do_not_clear=False)],
-                [Button("Print")],
+                [Text("Cell/Barcode/WO", size=(20, 2)), InputText(do_not_clear=False, key="-Input-")],
+                [Button("Print", bind_return_key=True)],
             ],
         )
         gbg = generalized_barcode_generation()
@@ -51,33 +60,8 @@ class combined_gui:
                 if event == "Exit" or event == WIN_CLOSED:
                     break
                 elif event == "Print":
-                    gbg.entered(value=values[0])
+                    gbg.entered(value=values["-Input-"])
                     gbg.send()
-                    gbg.reset()
-            except Exception as E:
-                print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
-                # break
-        self._cell_window.close()
-        self._cell_window = None
-
-    def _dryroom(self):
-        self._cell_window = Window(
-            "Dryroom Layout",
-            [
-                [Text("Enter text to print", size=(20, 2)), InputText(do_not_clear=False)],
-                [Button("Print")],
-            ],
-        )
-        gbg = generalized_barcode_generation()
-        while True:
-            try:
-                event, values = self._cell_window.read()
-                print(event, values)
-                if event == "Exit" or event == WIN_CLOSED:
-                    break
-                elif event == "Print":
-                    gbg.entered(check_override=True, value=values[0])
-                    gbg.send(printer_name="ZDesigner ZT411R-203dpi ZPL", conn_type="name")
                     gbg.reset()
             except Exception as E:
                 print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
@@ -90,8 +74,8 @@ class combined_gui:
             "Box Layout",
             [
                 [Text("Please type in cell_id to print box label for: ")],
-                [Text("Text", size=(20, 2)), InputText(do_not_clear=False)],
-                [Button("Print Label")],
+                [Text("Text", size=(20, 2)), InputText(do_not_clear=False, key="-Input-")],
+                [Button("Print Label", bind_return_key=True)],
                 [Text("*Note, cell_id must be in 'PN:SN' format!")],
             ],
         )
@@ -103,7 +87,7 @@ class combined_gui:
                 if event == "Exit" or event == WIN_CLOSED:
                     break
                 elif event == "Print Label":
-                    gbg.productionboxlabel(values[0])
+                    gbg.productionboxlabel(values["-Input-"])
                     gbg.send(host=zt421_host, port=zt421_port, dpi=zt421_dpi)
                     gbg.reset()
             except Exception as E:
@@ -118,11 +102,11 @@ class combined_gui:
             [
                 [
                     Text("Please type in cell_id to print box label for: ", size=(20, 2)),
-                    InputText(do_not_clear=False),
+                    InputText(do_not_clear=False, key="cell_id"),
                 ],
                 [
                     Text("Please type in QUANTITY to print box label for: ", size=(20, 2)),
-                    InputText(do_not_clear=False),
+                    InputText(do_not_clear=False, key="QTY"),
                 ],
                 [Button("Print Label")],
                 [Text("*Note, cell_id must be in 'PN:SN' format!")],
@@ -136,7 +120,7 @@ class combined_gui:
                 if event == "Exit" or event == WIN_CLOSED:
                     break
                 elif event == "Print Label":
-                    gbg.processboxlabel(values[0], values[1])
+                    gbg.processboxlabel(values["cell_id"], values["QTY"])
                     gbg.send(host=zt421_host, port=zt421_port, dpi=zt421_dpi)
                     gbg.reset()
             except Exception as E:
@@ -191,6 +175,62 @@ class combined_gui:
                 break
         self._el_window.close()
         self._el_window = None
+
+    def _custom(self, **kwargs):
+        self._custom_window = Window(
+            "CustomPrinting",
+            [
+                [
+                    Multiline(
+                        "PrintMe",
+                        size=(50, 10),
+                        enter_submits=True,
+                        expand_x=True,
+                        expand_y=True,
+                        do_not_clear=False,
+                        key="-Input-",
+                    )
+                ],
+                [Text("Settings for print [Default]-> ")],
+                [
+                    Text("TextSize [25]"),
+                    InputText("25", 2, key="TextSize"),
+                    Text("QRSize [4]"),
+                    InputText("4", 2, key="QRSize"),
+                ],
+                [Button("Print")],
+            ],
+        )
+        gbg = generalized_barcode_generation()
+        qr = ""
+        while True:
+            try:
+                event, values = self._el_window.read()
+                print(event, values)
+                if event == "Exit" or event == WIN_CLOSED:
+                    break
+                else:
+                    None
+                    if values["-Input-"].startswith("^XA") and values[0].endswith("^XZ"):
+                        qr = values["-Input-"]
+                        gbg.send(qr=qr)
+                    elif kwargs.get("printer_name", False):
+                        gbg.entered(check_override=True, value=values["-Input-"])
+                        gbg.send(
+                            printer_name=kwargs.get("printer_name", "ZDesigner ZT411R-203dpi ZPL"),
+                            conn_type=kwargs.get("conn_type", "name"),
+                        )
+                    else:
+                        qr = rf"""^XA
+                        ^FO30,30^BQN,2,{values['QRSize']},H,6^FDQA,{values["-Input-"]}^FS
+                        ^CF0,{values['TextSize']},{values['TextSize']}^FO175,75,0^FB225,5,0,L,0^FD{values["-Input-"]}^FS^XZ"""
+                        gbg.send(qr=qr)
+                    gbg.reset()
+            except Exception as E:
+                print(E, type(E).__name__, __file__, E.__traceback__.tb_lineno)
+                break
+        self._custom_window.close()
+        self._custom_window = None
 
 
 def main():
