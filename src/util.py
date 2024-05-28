@@ -20,10 +20,7 @@ from private import (
 
 class generalized_barcode_generation:
     def __init__(self, label_x=2, label_y=1, dpi=203):
-        """create zebra printer string for the barcode labels.
-        Run .wo_based, .excel_based, or .manual to generate the entry.
-        Run .send to create the individual zebra strings & print
-        """
+        """create zebra printer string for the barcode labels."""
         self.label_x = int(label_x)
         self.label_y = int(label_y)
         self.dpi = int(dpi)
@@ -31,6 +28,15 @@ class generalized_barcode_generation:
         self.qr = ""
 
     def entered(self, value=None, check_override=False, **kwargs):
+        """Data entry function.
+
+        Args:
+            value (string, optional): If known what should be printed, send as value. Defaults to None.
+            check_override (bool, optional): If set to TRUE, will not check that items exist in SPARC. Defaults to False.
+
+        Returns:
+            list : a list of strings to print
+        """
         try:
             if value is None:
                 item_list = [
@@ -60,15 +66,36 @@ class generalized_barcode_generation:
         return item_list
 
     def _dpi(self, **kwargs):
+        """Get/validate that the dpi is an integer. Necessary in case DPI is reset after class creation
+
+        Returns:
+            int : DPI in integer form
+        """
         return int(kwargs.get("dpi", self.dpi))
 
     def no_check(self, item_list):
+        """if entered function uses check_override, this function will generate the appropriate format for the printing
+
+        Args:
+            item_list (list): list of strings to print
+
+        Returns:
+            dict : dictionary, with item as the key and then blank workorder & barcode in sub-keys
+        """
         d = {}
         for item in item_list:
             d[item] = {"workorder": "", "barcode": ""}
         return d
 
     def item_check(self, item_list):
+        """if check_override is false, this will check each item entered is a valid item in SPARC, & return associated information
+
+        Args:
+            item_list (str, list): List of items to check
+
+        Returns:
+            dict : Dictionary formatted for printing
+        """
         d = {}
         try:
             sparc = MySQL(
@@ -104,6 +131,7 @@ class generalized_barcode_generation:
         return d
 
     def celllabel(self, **kwargs):
+        """Sets the QR string for each item in the list of items to generate barcodes for if the entered information is a cell label"""
         try:
             for key, item in self.zitems.items():
                 qr = self._cell_zebra_text(
@@ -122,7 +150,7 @@ class generalized_barcode_generation:
         """Zebra printer configuration
             **kwargs: qr_loc, cell_loc, barcode_loc, workorder_loc, cell_text_size, barcode_text_size, workorder_text_size
         Returns:
-            _type_: _description_
+            str : string to send to zebra printer
         """
         try:
             if "dpi" in kwargs:
@@ -161,6 +189,11 @@ class generalized_barcode_generation:
         return self.qr
 
     def productionboxlabel(self, cell_id):
+        """Sets the QR string for the box of the given cell_id
+
+        Args:
+            cell_id (str): cell_id to print the box label for
+        """
         sparc = MySQL(
             getenv("mysql_user", mysql_user),
             getenv("mysql_password", mysql_password),
